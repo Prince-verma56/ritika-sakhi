@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Navbar from '@/components/Navbar';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -34,8 +33,6 @@ export default function Gallery() {
   return (
     <>
       <div className="w-full h-full bg-[#fefae0] overflow-x-hidden px-4">
-        <div className="relative z-[9999]"><Navbar /></div>
-
         {/* PAGE 1 Title */}
         <div className="page1 w-full h-20 p-10 mb-2 mt-10 flex justify-center items-center">
           <h1 className="cook-title text-6xl font-bold font-[RollingBeat] text-center text-[#f48c06]">

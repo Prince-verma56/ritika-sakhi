@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Navbar from '@/components/Navbar';
 import VideoShowcase from '@/components/VideoShowcase';
 import SnowflakeCursor2 from '@/components/AllCursors/SnowFlakeCursor2';
 import Image from 'next/image';
@@ -39,7 +38,6 @@ export default function Memories() {
     <>
       <main className="main w-full h-full bg-[#fefae0] overflow-x-hidden px-4">
         <SnowflakeCursor2 />
-        <Navbar />
 
         <div className="top-heading w-full h-20 p-10 mb-2 mt-10 flex justify-center items-center">
           <h1 className="cook-title text-8xl font-bold font-[Valent] tracking-widest text-center text-[#ff9770]">

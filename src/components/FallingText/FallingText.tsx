@@ -30,13 +30,13 @@ const FallingText: React.FC<FallingTextProps> = ({
   const textRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [effectStarted, setEffectStarted] = useState(false);
+  const [effectStarted, setEffectStarted] = useState(trigger === 'auto');
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
     const resizeObserver = new ResizeObserver(entries => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         setDimensions({
           width: entry.contentRect.width,
           height: entry.contentRect.height
@@ -54,7 +54,7 @@ const FallingText: React.FC<FallingTextProps> = ({
     const words: string[] = [];
     const rawTokens = text.split(/\s+/);
 
-    for (let token of rawTokens) {
+    for (const token of rawTokens) {
       if (token === '') continue;
       // If this token does not contain alphanumeric characters (is an emoji or symbol)
       // and we already have a word, append it with a non-breaking space!
@@ -84,10 +84,6 @@ const FallingText: React.FC<FallingTextProps> = ({
   }, [text, highlightWords, highlightClass, wordClass]);
 
   useEffect(() => {
-    if (trigger === 'auto') {
-      setEffectStarted(true);
-      return;
-    }
     if (trigger === 'scroll' && containerRef.current) {
       const observer = new IntersectionObserver(
         ([entry]) => {

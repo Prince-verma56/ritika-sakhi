@@ -5,391 +5,430 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useInView } from 'motion/react';
 
-// ─── Floating gold orb — decorative background detail ────────────────────────
-function GoldOrb({ size, top, left, opacity }: { size: number; top: string; left: string; opacity: number }) {
+function Diamond({ size = 6, opacity = 0.5 }: { size?: number; opacity?: number }) {
   return (
-    <div
-      className="absolute rounded-full pointer-events-none"
-      style={{
-        width: size, height: size,
-        top, left, opacity,
-        background: 'radial-gradient(circle, rgba(200,180,50,0.35) 0%, transparent 70%)',
-        filter: 'blur(28px)',
-      }}
-    />
-  );
-}
-
-// ─── Inline quote mark SVG ────────────────────────────────────────────────────
-function QuoteMark() {
-  return (
-    <svg width="48" height="36" viewBox="0 0 48 36" fill="none" className="mb-3 opacity-30">
-      <path d="M0 36V22.5C0 10.074 7.2 2.7 21.6 0l2.4 4.5C16.2 6.3 12 10.8 12 18H21.6V36H0ZM26.4 36V22.5C26.4 10.074 33.6 2.7 48 0l2.4 4.5C42.6 6.3 38.4 10.8 38.4 18H48V36H26.4Z"
-        fill="#847B1A" />
+    <svg width={size} height={size} viewBox="0 0 10 10" style={{ opacity, flexShrink: 0 }}>
+      <polygon points="5,0 10,5 5,10 0,5" fill="#847B1A" />
     </svg>
   );
 }
 
 export default function AboutSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLDivElement>(null);
+  const leftRef    = useRef<HTMLDivElement>(null);
+  const rightRef   = useRef<HTMLDivElement>(null);
+  const bottomRef  = useRef<HTMLDivElement>(null);
 
-  const leftInView = useInView(leftRef, { once: true, amount: 0.25 });
-  const rightInView = useInView(rightRef, { once: true, amount: 0.25 });
-  const taglineInView = useInView(taglineRef, { once: true, amount: 0.5 });
+  const leftInView   = useInView(leftRef,   { once: true, amount: 0.18 });
+  const rightInView  = useInView(rightRef,  { once: true, amount: 0.18 });
+  const bottomInView = useInView(bottomRef, { once: true, amount: 0.4  });
 
   return (
-    <>
-      <div
-        ref={sectionRef}
-        className="page2 w-full relative overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #fefae0 0%, #fdf3d0 60%, #fef6e4 100%)', minHeight: '100vh' }}
-      >
-        {/* ── Decorative ambient orbs ── */}
-        <GoldOrb size={380} top="-80px" left="-100px" opacity={0.6} />
-        <GoldOrb size={260} top="40%" left="85%" opacity={0.45} />
-        <GoldOrb size={200} top="70%" left="10%" opacity={0.3} />
+    <div
+      className="page2 w-full relative overflow-hidden"
+      style={{ background: 'linear-gradient(168deg,#fefae0 0%,#fdf4cc 55%,#fef8e4 100%)', minHeight: '100vh' }}
+    >
+      {/* ═══════════════════════════════════
+          DECORATIVE BACKGROUND LAYER
+      ═══════════════════════════════════ */}
 
-        {/* ── Thin top accent line ── */}
+      {/* Large faint mandala-style ring — top right */}
+      <div className="absolute pointer-events-none" style={{ top: '-120px', right: '-120px', zIndex: 0 }}>
+        <svg width="520" height="520" viewBox="0 0 520 520" fill="none">
+          <circle cx="260" cy="260" r="240" stroke="rgba(132,123,26,0.07)" strokeWidth="1" />
+          <circle cx="260" cy="260" r="200" stroke="rgba(132,123,26,0.05)" strokeWidth="1" />
+          <circle cx="260" cy="260" r="160" stroke="rgba(132,123,26,0.04)" strokeWidth="1" />
+          {/* 8 radial spokes */}
+          {[0,45,90,135,180,225,270,315].map(a => (
+            <line key={a}
+              x1={260 + 160 * Math.cos(a * Math.PI/180)}
+              y1={260 + 160 * Math.sin(a * Math.PI/180)}
+              x2={260 + 240 * Math.cos(a * Math.PI/180)}
+              y2={260 + 240 * Math.sin(a * Math.PI/180)}
+              stroke="rgba(132,123,26,0.06)" strokeWidth="1"
+            />
+          ))}
+        </svg>
+      </div>
+
+      {/* Corner ornament — bottom left */}
+      <div className="absolute pointer-events-none" style={{ bottom: '80px', left: '0', zIndex: 0 }}>
+        <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+          <path d="M0 220 Q 0 0 220 0" stroke="rgba(132,123,26,0.08)" strokeWidth="1" fill="none"/>
+          <path d="M0 180 Q 0 40 180 40" stroke="rgba(132,123,26,0.06)" strokeWidth="1" fill="none"/>
+          <path d="M0 140 Q 0 80 140 80" stroke="rgba(132,123,26,0.05)" strokeWidth="1" fill="none"/>
+        </svg>
+      </div>
+
+      {/* Ambient gold glow — centre */}
+      <div className="absolute pointer-events-none" style={{
+        top: '30%', left: '30%', width: 500, height: 400,
+        background: 'radial-gradient(ellipse, rgba(210,190,60,0.08) 0%, transparent 70%)',
+        filter: 'blur(60px)', zIndex: 0,
+      }} />
+
+      {/* Top hairline */}
+      <motion.div
+        className="absolute top-0 left-0 w-full pointer-events-none"
+        style={{ height: 1, background: 'linear-gradient(to right,transparent 0%,rgba(132,123,26,0.3) 25%,rgba(132,123,26,0.3) 75%,transparent 100%)', zIndex: 2 }}
+        initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+        transition={{ duration: 1.3, ease: [0.22,1,0.36,1] }}
+      />
+
+      {/* ═══════════════════════════════════
+          MAIN LAYOUT
+      ═══════════════════════════════════ */}
+      <div className="relative z-10 w-full min-h-screen flex flex-col lg:flex-row items-center px-8 lg:px-16 xl:px-20 pt-16 pb-4 gap-10 lg:gap-14">
+
+        {/* ──────────── LEFT — Message panel ──────────── */}
         <motion.div
-          className="w-full h-[2px] absolute top-0 left-0"
-          style={{ background: 'linear-gradient(to right, transparent, rgba(132,123,26,0.4), transparent)' }}
-          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-          transition={{ duration: 1.1, ease: 'easeOut' }}
-        />
-
-        {/* ── Main content ── */}
-        <div className="w-full min-h-screen flex flex-col lg:flex-row items-center px-8 lg:px-20 py-16 gap-12 relative z-10">
-
-          {/* ────────────────── LEFT — Text card ────────────────── */}
+          ref={leftRef}
+          className="w-full lg:w-[52%] flex flex-col justify-center"
+          initial={{ opacity: 0, x: -48 }}
+          animate={leftInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.9, ease: [0.22,1,0.36,1] }}
+        >
+          {/* Section index */}
           <motion.div
-            ref={leftRef}
-            className="w-full lg:w-[52%] relative"
-            initial={{ opacity: 0, x: -60 }}
-            animate={leftInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center gap-3 mb-8"
+            initial={{ opacity: 0 }} animate={leftInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            {/* Card with refined border */}
-            <div
-              className="relative rounded-3xl p-8 lg:p-12"
-              style={{
-                background: 'rgba(255,252,235,0.75)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(132,123,26,0.18)',
-                boxShadow: '0 8px 48px rgba(132,123,26,0.08), inset 0 1px 0 rgba(255,255,255,0.6)',
-              }}
-            >
-              {/* Corner accent — top left */}
-              <div className="absolute top-4 left-4 pointer-events-none" style={{ opacity: 0.25 }}>
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <path d="M0 32 L0 0 L32 0" fill="none" stroke="#847B1A" strokeWidth="1.5" />
-                </svg>
-              </div>
-              {/* Corner accent — bottom right */}
-              <div className="absolute bottom-4 right-4 pointer-events-none" style={{ opacity: 0.25 }}>
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <path d="M32 0 L32 32 L0 32" fill="none" stroke="#847B1A" strokeWidth="1.5" />
-                </svg>
-              </div>
-
-              {/* Eyebrow */}
-              <motion.p
-                className="text-[10px] uppercase tracking-[0.5em] mb-4"
-                style={{ color: 'rgba(132,123,26,0.55)', fontFamily: 'monospace' }}
-                initial={{ opacity: 0, y: -10 }}
-                animate={leftInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                ✦ a birthday tribute
-              </motion.p>
-
-              {/* Name — staggered letters */}
-              <div className="overflow-hidden mb-6">
-                <motion.h1
-                  className="font-serif font-bold"
-                  style={{ fontSize: 'clamp(2.2rem,5vw,3.8rem)', color: '#847B1A', lineHeight: 1.1 }}
-                  initial={{ y: 60, opacity: 0 }}
-                  animate={leftInView ? { y: 0, opacity: 1 } : {}}
-                  transition={{ duration: 0.65, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  Ritika Madam
-                </motion.h1>
-              </div>
-
-              {/* Thin gold rule */}
-              <motion.div
-                style={{ height: 1, background: 'linear-gradient(to right, #847B1A, transparent)', marginBottom: 24, opacity: 0.35 }}
-                initial={{ scaleX: 0 }}
-                animate={leftInView ? { scaleX: 1 } : {}}
-                transition={{ duration: 0.6, delay: 0.45, ease: 'easeOut' }}
-              />
-
-              {/* Quote mark */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={leftInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.5, delay: 0.55 }}
-              >
-                <QuoteMark />
-              </motion.div>
-
-              {/* Paragraph — fades in as a block */}
-              <motion.p
-                className="font-mono leading-relaxed"
-                style={{ fontSize: 'clamp(0.82rem,1.4vw,1rem)', color: '#3a3520', lineHeight: 1.85 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={leftInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.7, delay: 0.6, ease: 'easeOut' }}
-              >
-                Some people show up only for the work — once the project ends, so does the
-                connection.{' '}
-                <span style={{ color: '#847B1A', fontWeight: 600 }}>Ritika was different.</span>{' '}
-                One Google Meet was all it took to feel like, okay, this person is genuinely one
-                of mine. No performance, no small talk — just honest, easy conversation.
-                <br /><br />
-                She is bubbly and fun, but also the kind of person you can say anything real to
-                without worrying. She never once made the BCA vs B.Tech difference feel like a
-                thing —{' '}
-                <span style={{ color: '#847B1A', fontStyle: 'italic' }}>
-                  and that, more than anything, is what makes her genuinely special.
-                </span>
-              </motion.p>
-
-              {/* CTA button */}
-              <motion.div
-                className="mt-8"
-                initial={{ opacity: 0, y: 16 }}
-                animate={leftInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.85, ease: 'easeOut' }}
-              >
-                <Link href="/about">
-                  <button
-                    className="group relative overflow-hidden px-8 py-3 rounded-full font-mono text-sm font-semibold transition-all duration-300"
-                    style={{
-                      border: '1.5px solid rgba(132,123,26,0.6)',
-                      color: '#847B1A',
-                      background: 'transparent',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLButtonElement).style.background = '#847B1A';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#fefae0';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#847B1A';
-                    }}
-                  >
-                    <span className="relative z-10 tracking-widest uppercase text-xs">About her ✦</span>
-                  </button>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Floating badge — overlaps card corner */}
-            <motion.div
-              className="absolute -top-5 -right-5 w-16 h-16 rounded-full flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #fefae0, #f5e68c)',
-                border: '1.5px solid rgba(132,123,26,0.3)',
-                boxShadow: '0 4px 20px rgba(132,123,26,0.18)',
-                fontSize: 26,
-              }}
-              initial={{ scale: 0, rotate: -30 }}
-              animate={leftInView ? { scale: 1, rotate: 0 } : {}}
-              transition={{ duration: 0.6, delay: 1.0, type: 'spring', stiffness: 200 }}
-            >
-              🌸
-            </motion.div>
+            <Diamond size={5} opacity={0.3} />
+            <span style={{ fontSize: 10, fontFamily: 'monospace', letterSpacing: '0.55em', color: 'rgba(132,123,26,0.45)', textTransform: 'uppercase' }}>
+              Profile · 01
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(132,123,26,0.14)' }} />
           </motion.div>
 
-          {/* ────────────────── RIGHT — Portrait ────────────────── */}
+          {/* Name plate */}
+          <div className="overflow-hidden mb-1">
+            <motion.h1
+              style={{ fontFamily: 'Georgia,"Times New Roman",serif', fontSize: 'clamp(3rem,6vw,5rem)', fontWeight: 400, color: '#4e4a0e', lineHeight: 1, letterSpacing: '-0.01em' }}
+              initial={{ y: 90, opacity: 0 }}
+              animate={leftInView ? { y: 0, opacity: 1 } : {}}
+              transition={{ duration: 0.75, delay: 0.2, ease: [0.22,1,0.36,1] }}
+            >
+              Ritika
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden mb-7">
+            <motion.h2
+              style={{ fontFamily: 'Georgia,"Times New Roman",serif', fontSize: 'clamp(1rem,2.2vw,1.6rem)', fontWeight: 400, color: '#847B1A', lineHeight: 1, letterSpacing: '0.38em', textTransform: 'uppercase' }}
+              initial={{ y: 40, opacity: 0 }}
+              animate={leftInView ? { y: 0, opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.32, ease: [0.22,1,0.36,1] }}
+            >
+              Madam
+            </motion.h2>
+          </div>
+
+          {/* ── Royal message box ── */}
           <motion.div
-            ref={rightRef}
-            className="w-full lg:w-[48%] flex items-center justify-center relative"
-            initial={{ opacity: 0, x: 60 }}
-            animate={rightInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="relative rounded-2xl overflow-hidden"
+            style={{
+              background: 'rgba(255,253,238,0.72)',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(132,123,26,0.16)',
+              boxShadow: '0 4px 40px rgba(132,123,26,0.07), inset 0 1px 0 rgba(255,255,255,0.7)',
+            }}
+            initial={{ opacity: 0, y: 28 }}
+            animate={leftInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.42, ease: [0.22,1,0.36,1] }}
           >
-            {/* Soft glow ring behind image */}
+            {/* Top border accent — animated gold bar */}
+            <motion.div
+              style={{ height: 2, background: 'linear-gradient(to right,rgba(132,123,26,0.6),rgba(200,185,60,0.8),rgba(132,123,26,0.6))', transformOrigin: 'left' }}
+              initial={{ scaleX: 0 }}
+              animate={leftInView ? { scaleX: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.52 }}
+            />
+
+            <div className="p-7 lg:p-8">
+              {/* Corner SVG ornaments inside box */}
+              <div className="absolute top-3 left-3 pointer-events-none" style={{ opacity: 0.18 }}>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 22 L0 0 L22 0" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+              </div>
+              <div className="absolute top-3 right-3 pointer-events-none" style={{ opacity: 0.18 }}>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 22 L22 0 L0 0" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+              </div>
+              <div className="absolute bottom-3 left-3 pointer-events-none" style={{ opacity: 0.18 }}>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 0 L0 22 L22 22" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+              </div>
+              <div className="absolute bottom-3 right-3 pointer-events-none" style={{ opacity: 0.18 }}>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 0 L22 22 L0 22" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+              </div>
+
+              {/* Pull quote */}
+              <motion.p
+                style={{ fontFamily: 'Georgia,serif', fontSize: 'clamp(0.9rem,1.5vw,1.05rem)', fontStyle: 'italic', color: '#6a6210', lineHeight: 1.65, paddingLeft: 14, borderLeft: '2px solid rgba(132,123,26,0.4)', marginBottom: 18 }}
+                initial={{ opacity: 0, x: -12 }}
+                animate={leftInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                &ldquo;One Google Meet was all it took — this person is genuinely one of mine.&rdquo;
+              </motion.p>
+
+              {/* Divider */}
+              <motion.div
+                className="flex items-center gap-3 mb-5"
+                initial={{ opacity: 0 }} animate={leftInView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.4, delay: 0.68 }}
+              >
+                <div style={{ flex: 1, height: 1, background: 'rgba(132,123,26,0.12)' }} />
+                <Diamond size={4} opacity={0.25} />
+                <div style={{ flex: 1, height: 1, background: 'rgba(132,123,26,0.12)' }} />
+              </motion.div>
+
+              {/* Body text */}
+              <motion.p
+                style={{ fontFamily: 'monospace', fontSize: 'clamp(0.76rem,1.2vw,0.9rem)', color: 'rgba(48,44,18,0.72)', lineHeight: 2.0 }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={leftInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.65, delay: 0.72 }}
+              >
+                Some people show up only for the work — once the project ends, so does the
+                connection. Ritika was different. No performance, no small talk — just honest,
+                easy conversation. She is bubbly and fun, but also the kind of person you can say
+                anything real to without worrying. She never once made the BCA vs B.Tech
+                difference feel like a thing, and{' '}
+                <span style={{ color: '#847B1A', fontStyle: 'italic' }}>that is what makes her genuinely special.</span>
+              </motion.p>
+            </div>
+
+            {/* Bottom border accent */}
+            <motion.div
+              style={{ height: 1, background: 'linear-gradient(to right,transparent,rgba(132,123,26,0.2),transparent)', transformOrigin: 'left' }}
+              initial={{ scaleX: 0 }}
+              animate={leftInView ? { scaleX: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.78 }}
+            />
+          </motion.div>
+
+          {/* ── Traits row ── */}
+          <motion.div
+            className="flex items-stretch gap-0 mt-5"
+            initial={{ opacity: 0, y: 16 }}
+            animate={leftInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.55, delay: 0.88 }}
+          >
+            {[
+              { label: 'Vibe',       value: 'Bubbly · Honest'  },
+              { label: 'Connection', value: 'Genuine · Deep'   },
+              { label: 'Energy',     value: 'Warm · Bright'    },
+            ].map((item, i) => (
+              <React.Fragment key={item.label}>
+                {i > 0 && <div style={{ width: 1, background: 'rgba(132,123,26,0.14)', margin: '0 16px' }} />}
+                <div className="flex flex-col gap-1">
+                  <span style={{ fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.4em', textTransform: 'uppercase', color: 'rgba(132,123,26,0.4)' }}>{item.label}</span>
+                  <span style={{ fontSize: 12, fontFamily: 'Georgia,serif', color: '#6a6210', fontWeight: 600 }}>{item.value}</span>
+                </div>
+              </React.Fragment>
+            ))}
+          </motion.div>
+
+          {/* ── CTA ── */}
+          <motion.div
+            className="mt-7"
+            initial={{ opacity: 0 }}
+            animate={leftInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 1.02 }}
+          >
+            <Link href="/about">
+              <span
+                className="inline-flex items-center gap-3"
+                style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.48em', textTransform: 'uppercase', color: '#847B1A', cursor: 'pointer' }}
+              >
+                <span style={{ borderBottom: '1px solid rgba(132,123,26,0.4)', paddingBottom: 2 }}>Read more about her</span>
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                  <path d="M1 5h12M8 1l5 4-5 4" stroke="#847B1A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* ──────────── RIGHT — Portrait ──────────── */}
+        <motion.div
+          ref={rightRef}
+          className="w-full lg:w-[48%] flex items-center justify-center relative"
+          initial={{ opacity: 0, x: 52 }}
+          animate={rightInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.95, delay: 0.12, ease: [0.22,1,0.36,1] }}
+        >
+          {/* Ambient glow */}
+          <div className="absolute pointer-events-none" style={{
+            width: '80%', height: '80%',
+            background: 'radial-gradient(ellipse,rgba(210,190,80,0.13) 0%,transparent 70%)',
+            filter: 'blur(44px)', zIndex: 0,
+          }} />
+
+          {/* ── Portrait — TRUE clip-path arch ── */}
+          <motion.div
+            className="relative"
+            style={{
+              width: 'clamp(280px,34vw,420px)',
+              aspectRatio: '3/4',
+              zIndex: 2,
+            }}
+            whileHover={{ y: -6 }}
+            transition={{ duration: 0.5, ease: [0.22,1,0.36,1] }}
+          >
+            {/* Decorative frame ring — sits behind the clipped image */}
             <div
-              className="absolute rounded-full pointer-events-none"
+              className="absolute"
               style={{
-                width: '80%', height: '80%',
-                background: 'radial-gradient(circle, rgba(255,220,120,0.22) 0%, transparent 70%)',
-                filter: 'blur(32px)',
+                inset: -8,
+                borderRadius: '50% 50% 18px 18px / 28% 28% 18px 18px',
+                border: '1px solid rgba(132,123,26,0.18)',
+                zIndex: 0,
+              }}
+            />
+            <div
+              className="absolute"
+              style={{
+                inset: -16,
+                borderRadius: '50% 50% 22px 22px / 28% 28% 22px 22px',
+                border: '1px dashed rgba(132,123,26,0.1)',
                 zIndex: 0,
               }}
             />
 
-            {/* Portrait container — arch top shape */}
-            <motion.div
-              className="group relative overflow-hidden"
+            {/* Clipped image container */}
+            <div
+              className="relative w-full h-full overflow-hidden"
               style={{
-                scale: 1.1,
-                width: 'clamp(260px,38vw,420px)',
-                aspectRatio: '3/4',
-                borderRadius: '90% 90% 24px 24px / 44% 44% 24px 24px',
-                border: '2px solid rgba(132,123,26,0.22)',
-                boxShadow: '0 24px 64px rgba(100,80,20,0.18)',
+                borderRadius: '50% 50% 18px 18px / 28% 28% 18px 18px',
+                boxShadow: '0 28px 72px rgba(80,65,15,0.22), 0 0 0 1px rgba(132,123,26,0.12)',
                 zIndex: 1,
               }}
-              whileHover={{
-                boxShadow: '0 35px 90px rgba(100,80,20,0.28)',
-                y: -6,
-              }}
-              transition={{
-                duration: 0.5,
-                ease: [0.22, 1, 0.36, 1],
-              }}
             >
-              {/* Background Wash */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(160deg, #fce4e4 0%, #fff8e7 100%)',
-                  zIndex: 0,
-                }}
-              />
+              {/* Warm bg wash */}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(170deg,#fce8e0 0%,#fff5dc 100%)', zIndex: 0 }} />
 
-              {/* Image Zoom Layer */}
+              {/* Image with zoom on hover */}
               <motion.div
                 className="absolute inset-0"
-                whileHover={{
-                  scale: 1.12,
-                }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                style={{ zIndex: 1 }}
+                whileHover={{ scale: 1.08 }}
+                transition={{ duration: 0.9, ease: [0.22,1,0.36,1] }}
               >
                 <Image
-                  src="https://res.cloudinary.com/dtslaveid/image/upload/v1780515074/ChatGPT_Image_Jun_4_2026_12_52_12_AM_v4aad3.png"
+                  src="https://res.cloudinary.com/dtslaveid/image/upload/v1780512397/ChatGPT_Image_Jun_3_2026_06_34_59_PM_aztjma.png"
                   fill
-                  className="object-cover"
-                  alt="Ritika Mam"
+                  className="object-cover object-top"
+                  alt="Ritika Madam"
                   loading="lazy"
-                  sizes="(max-width: 768px) 100vw, 38vw"
+                  sizes="(max-width: 768px) 100vw, 34vw"
+                  style={{ zIndex: 1 }}
                 />
               </motion.div>
 
-              {/* Cinematic Gradient */}
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                initial={{
-                  opacity: 0.5,
-                }}
-                whileHover={{
-                  opacity: 0.9,
-                }}
-                transition={{
-                  duration: 0.5,
-                }}
-                style={{
-                  zIndex: 2,
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.20) 0%, transparent 35%, rgba(0,0,0,0.08) 100%)',
-                }}
-              />
+              {/* Top shine */}
+              <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, background: 'linear-gradient(175deg,rgba(255,255,255,0.16) 0%,transparent 40%)' }} />
 
-              {/* Soft Shine */}
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                initial={{
-                  x: '-120%',
-                }}
-                whileHover={{
-                  x: '120%',
-                }}
-                transition={{
-                  duration: 1.4,
-                  ease: 'easeInOut',
-                }}
-                style={{
-                  zIndex: 3,
-                  background:
-                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
-                }}
-              />
-            </motion.div>
+              {/* Bottom name overlay */}
+              <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{
+                zIndex: 3,
+                background: 'linear-gradient(to top,rgba(55,46,8,0.62) 0%,transparent 100%)',
+                padding: '44px 22px 18px',
+              }}>
+                <p style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.45em', color: 'rgba(255,248,190,0.55)', textTransform: 'uppercase', marginBottom: 3 }}>birthday girl</p>
+                <p style={{ fontFamily: 'Georgia,serif', fontSize: 18, color: 'rgba(255,252,215,0.96)', fontWeight: 400 }}>Ritika Madam</p>
+              </div>
+            </div>
 
-            {/* Floating mini card — personality stat */}
+            {/* ── Floating card — bottom left ── */}
             <motion.div
-              className="absolute bottom-6 -left-4 lg:-left-8 rounded-2xl px-5 py-3"
+              className="absolute rounded-xl"
               style={{
-                background: 'rgba(255,252,235,0.92)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(132,123,26,0.2)',
-                boxShadow: '0 8px 24px rgba(132,123,26,0.12)',
+                bottom: '6%', left: '-14%',
+                padding: '10px 16px',
+                background: 'rgba(255,253,235,0.95)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(132,123,26,0.14)',
+                boxShadow: '0 8px 32px rgba(132,123,26,0.1)',
                 zIndex: 10,
               }}
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={rightInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.55, delay: 0.9, type: 'spring', stiffness: 180 }}
+              transition={{ duration: 0.55, delay: 0.85, type: 'spring', stiffness: 160, damping: 16 }}
             >
-              <p className="text-[10px] uppercase tracking-widest font-mono" style={{ color: 'rgba(132,123,26,0.5)' }}>vibes</p>
-              <p className="font-serif text-lg font-semibold" style={{ color: '#847B1A' }}>Genuine ✦ Warm</p>
+             
+
             </motion.div>
 
-            {/* Floating mini card — top right */}
+            {/* ── Vertical label — right side ── */}
             <motion.div
-              className="absolute top-6 -right-2 lg:-right-6 rounded-2xl px-4 py-2"
-              style={{
-                background: 'rgba(255,252,235,0.92)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(132,123,26,0.2)',
-                boxShadow: '0 8px 24px rgba(132,123,26,0.12)',
-                zIndex: 10,
-              }}
-              initial={{ opacity: 0, y: -16, scale: 0.9 }}
-              animate={rightInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.55, delay: 1.05, type: 'spring', stiffness: 180 }}
+              className="absolute hidden lg:flex flex-col items-center gap-2"
+              style={{ right: '-36px', top: '22%', zIndex: 5 }}
+              initial={{ opacity: 0 }}
+              animate={rightInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.5, delay: 1.05 }}
             >
-              <p className="font-mono text-xs font-semibold" style={{ color: '#847B1A' }}>🎂 Birthday Girl</p>
+              <div style={{ width: 1, height: 44, background: 'rgba(132,123,26,0.18)' }} />
+              <span style={{ fontFamily: 'monospace', fontSize: 8, letterSpacing: '0.4em', color: 'rgba(132,123,26,0.35)', textTransform: 'uppercase', writingMode: 'vertical-rl' }}>Portrait</span>
+              <div style={{ width: 1, height: 44, background: 'rgba(132,123,26,0.18)' }} />
+            </motion.div>
+
+            {/* ── Star ornament — top right of portrait ── */}
+            <motion.div
+              className="absolute"
+              style={{ top: '-18px', right: '-10px', zIndex: 5 }}
+              initial={{ opacity: 0, scale: 0, rotate: -45 }}
+              animate={rightInView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
+              transition={{ duration: 0.6, delay: 1.1, type: 'spring', stiffness: 200 }}
+            >
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                <path d="M14 2 L15.5 12 L26 14 L15.5 16 L14 26 L12.5 16 L2 14 L12.5 12 Z" fill="rgba(132,123,26,0.55)" />
+              </svg>
             </motion.div>
           </motion.div>
-        </div>
-
-        {/* ── Tagline strip — full width, bottom of section ── */}
-        <motion.div
-          ref={taglineRef}
-          className="w-full py-5 flex items-center justify-center gap-8 relative z-10 overflow-hidden"
-          style={{
-            borderTop: '1px solid rgba(132,123,26,0.1)',
-            background: 'rgba(255,250,224,0.5)',
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={taglineInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-        >
-          {['Bubbly', '✦', 'Honest', '✦', 'Genuine', '✦', 'Unforgettable', '✦', 'One of a Kind'].map((word, i) => (
-            <span
-              key={i}
-              className="font-mono text-xs uppercase tracking-widest whitespace-nowrap"
-              style={{ color: i % 2 === 1 ? 'rgba(132,123,26,0.3)' : 'rgba(132,123,26,0.6)' }}
-            >
-              {word}
-            </span>
-          ))}
         </motion.div>
-
-        {/* ── Bottom connector — organic curve into GallerySection ── */}
-        <div className="w-full pointer-events-none" style={{ height: 80, marginBottom: -1 }}>
-          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-full">
-            {/* Bleeds from #fefae0 into the gallery's #fefae0 — seamless */}
-            <path
-              d="M0,0 C200,60 500,80 720,40 C940,0 1200,70 1440,30 L1440,80 L0,80 Z"
-              fill="rgba(200,190,100,0.08)"
-            />
-            <path
-              d="M0,30 C300,80 700,20 1000,55 C1200,78 1380,35 1440,50 L1440,80 L0,80 Z"
-              fill="rgba(254,250,224,0.95)"
-            />
-          </svg>
-        </div>
       </div>
-    </>
+
+      {/* ═══════════════════════════════════
+          BOTTOM TAGLINE STRIP
+      ═══════════════════════════════════ */}
+      <motion.div
+        ref={bottomRef}
+        className="relative z-10 w-full flex items-center justify-center py-4 overflow-hidden"
+        style={{ borderTop: '1px solid rgba(132,123,26,0.09)' }}
+        initial={{ opacity: 0 }}
+        animate={bottomInView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="flex items-center gap-5 flex-wrap justify-center">
+          {['Bubbly','Honest','Genuine','Unforgettable','One of a Kind'].map((word, i, arr) => (
+            <React.Fragment key={word}>
+              <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(132,123,26,0.5)' }}>{word}</span>
+              {i < arr.length - 1 && <Diamond size={3} opacity={0.2} />}
+            </React.Fragment>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ═══════════════════════════════════
+          SCALLOPED ARCH SEPARATOR
+          Echoes the portrait arch motif.
+      ═══════════════════════════════════ */}
+      <div className="relative w-full pointer-events-none" style={{ height: 70, zIndex: 5, marginBottom: -1 }}>
+        <svg viewBox="0 0 1440 70" preserveAspectRatio="none" className="w-full h-full">
+          <path
+            d={`M0 70 ${ Array.from({length:9},(_,i)=>{
+              const x1=i*160, x2=(i+0.5)*160, x3=(i+1)*160;
+              return `C ${x1+80} 22, ${x2} 22, ${x3} 70`;
+            }).join(' ')} L1440 70 L0 70 Z`}
+            fill="rgba(132,123,26,0.055)"
+          />
+          <path
+            d={`M0 70 ${ Array.from({length:9},(_,i)=>{
+              const x1=i*160, x2=(i+0.5)*160, x3=(i+1)*160;
+              return `C ${x1+80} 32, ${x2} 32, ${x3} 70`;
+            }).join(' ')} L1440 70 L0 70 Z`}
+            fill="#fefae0"
+          />
+        </svg>
+      </div>
+    </div>
   );
 }

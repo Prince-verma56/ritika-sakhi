@@ -110,7 +110,7 @@ function EndMessage() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function FinalSection() {
   const petals = [
-    { delay: 0,   left: '55%', size: 16 },
+    { delay: 0, left: '55%', size: 16 },
     { delay: 1.5, left: '65%', size: 13 },
     { delay: 2.8, left: '75%', size: 18 },
     { delay: 0.7, left: '82%', size: 14 },
@@ -151,6 +151,7 @@ export default function FinalSection() {
               style={{ width: 'clamp(120px, 16vw, 260px)' }}
             >
               <div
+                className='absolute top-[-3vw] left-[-20vw] scale-60'
                 style={{
                   width: '100%',
                   height: 'clamp(200px, 26vw, 340px)',

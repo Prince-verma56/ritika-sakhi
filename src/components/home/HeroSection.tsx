@@ -2,13 +2,12 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Navbar from '@/components/Navbar';
 import CircularText from '@/components/CircularText/CircularText';
 
 export default function HeroSection() {
   return (
     <div className="page1 w-full h-screen relative flex flex-col">
-      <Navbar />
+      <div className="h-20 w-full flex-shrink-0" />
       <div className="hero1 w-full flex-1">
         <div className="flowers-area w-full h-full relative">
           <div className="mam-name h-full w-full absolute z-[1]">
