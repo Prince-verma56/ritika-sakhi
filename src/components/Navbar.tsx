@@ -21,7 +21,7 @@ export default function Navbar() {
         y: -30,
         scaleY: 0.5,
         rotateX: 45,
-        duration: 1,
+        duration: 1.2, // Slightly slower entrance for elegance
         opacity: 0,
         delay: 0.2,
         ease: 'power3.out',
@@ -32,37 +32,50 @@ export default function Navbar() {
   // Hide on scroll down, show on scroll up
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    let isHidden = false; // Prevents redundant GSAP calls
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
       if (!navbarRef.current) return;
 
-      // Prevent navbar flickering near top
+      // 1. Always show gracefully when near the very top
       if (currentScrollY < 50) {
-        gsap.to(navbarRef.current, {
-          y: 0,
-          duration: 0.4,
-          ease: 'power3.out',
-        });
+        if (isHidden) {
+          gsap.to(navbarRef.current, {
+            y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            overwrite: true,
+          });
+          isHidden = false;
+        }
         lastScrollY = currentScrollY;
         return;
       }
 
-      if (currentScrollY > lastScrollY) {
-        // Scrolling down
+      // 2. Ignore tiny micro-scrolls (increased to 30px for stability)
+      if (Math.abs(currentScrollY - lastScrollY) < 30) return;
+
+      // 3. Scroll Down -> Hide
+      if (currentScrollY > lastScrollY && !isHidden) {
         gsap.to(navbarRef.current, {
-          y: -160,
-          duration: 0.4,
-          ease: 'power3.out',
+          y: -130, // Just enough to hide h-30 (120px) + shadow
+          duration: 0.85,
+          ease: 'power3.inOut', // Smooth acceleration and deceleration
+          overwrite: true,      // Cancels any ongoing animations
         });
-      } else {
-        // Scrolling up
+        isHidden = true;
+      }
+      // 4. Scroll Up -> Reveal
+      else if (currentScrollY < lastScrollY && isHidden) {
         gsap.to(navbarRef.current, {
           y: 0,
-          duration: 0.4,
-          ease: 'power3.out',
+          duration: 0.85,
+          ease: 'power3.out', // Snaps out smoothly
+          overwrite: true,
         });
+        isHidden = false;
       }
 
       lastScrollY = currentScrollY;
@@ -86,17 +99,19 @@ export default function Navbar() {
           {/* Left Navigation */}
           <div className="nav-left hidden md:flex h-full w-1/2 items-center justify-center gap-6 lg:gap-10">
             <Link href="/" className={isActive('/')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A]">Home</h1>
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] transition-colors hover:text-[#5a5412]">
+                Home
+              </h1>
             </Link>
 
             <Link href="/meet-us" className={isActive('/meet-us')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer">
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer transition-colors hover:text-[#5a5412]">
                 Meet us
               </h1>
             </Link>
 
             <Link href="/gallery" className={isActive('/gallery')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer">
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer transition-colors hover:text-[#5a5412]">
                 Gallery
               </h1>
             </Link>
@@ -105,7 +120,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="logo h-28 w-28 md:h-36 md:w-36 lg:h-42 lg:w-45 relative shrink-0">
             <Image
-              src="/madam/D logo.png"
+              src="https://res.cloudinary.com/dtslaveid/image/upload/v1780527053/R_letter_logo_zl3z0d.png"
               alt="Ritika Logo"
               fill
               priority
@@ -117,19 +132,19 @@ export default function Navbar() {
           {/* Right Navigation */}
           <div className="nav-right hidden md:flex h-full w-1/2 items-center justify-center gap-6 lg:gap-10">
             <Link href="/gratitude" className={isActive('/gratitude')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer">
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer transition-colors hover:text-[#5a5412]">
                 Gratitude
               </h1>
             </Link>
 
             <Link href="/memories" className={isActive('/memories')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer">
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer transition-colors hover:text-[#5a5412]">
                 Memories
               </h1>
             </Link>
 
             <Link href="/about" className={isActive('/about')}>
-              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer">
+              <h1 className="text-lg lg:text-2xl text-[#847B1A] cursor-pointer transition-colors hover:text-[#5a5412]">
                 About Ritika
               </h1>
             </Link>
@@ -141,7 +156,7 @@ export default function Navbar() {
       <div className="h-30" />
 
       {/* Bottom Line */}
-      <div className="line bg-[#847B1A] w-[90%] lg:w-[75%] h-[1px] m-auto" />
+      <div className="line bg-[#847B1A] w-[90%] lg:w-[75%] h-[1px] m-auto opacity-70" />
     </>
   );
 }
