@@ -8,13 +8,13 @@ export default function GallerySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Each element watches itself
-  const headingRef  = useRef<HTMLDivElement>(null);
-  const flowersRef  = useRef<HTMLDivElement>(null);
-  const galleryRef  = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const flowersRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
 
-  const headingInView = useInView(headingRef,  { once: true, amount: 0.5 });
-  const flowersInView = useInView(flowersRef,  { once: true, amount: 0.3 });
-  const galleryInView = useInView(galleryRef,  { once: true, amount: 0.15 });
+  const headingInView = useInView(headingRef, { once: true, amount: 0.5 });
+  const flowersInView = useInView(flowersRef, { once: true, amount: 0.3 });
+  const galleryInView = useInView(galleryRef, { once: true, amount: 0.15 });
 
   return (
     <div
@@ -46,7 +46,7 @@ export default function GallerySection() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <h1
-          className="text-8xl font-serif uppercase text-center tracking-widest"
+          className="text-8xl font-awesome uppercase text-center tracking-widest"
           style={{ color: '#847B1A' }}
         >
           Gallery

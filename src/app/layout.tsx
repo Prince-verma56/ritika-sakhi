@@ -4,6 +4,11 @@ import { MusicProvider } from "@/components/MusicProvider";
 import { MusicNudge } from "@/components/MusicNudge";
 import PreloaderWrapper from "@/components/PreloaderWrapper";
 import Navbar from "@/components/Navbar";
+import SmoothScroll from "@/components/SmoothScroll";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Ritika Sakhi ",
@@ -20,7 +25,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js-loading');`
+          }}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              html.js-loading,
+              html.js-loading body {
+                background-color: #FCFAF2 !important;
+                overflow: hidden !important;
+              }
+              html.js-loading .hide-until-preloader {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+              }
+            `
+          }}
+        />
+      </head>
       <body className="antialiased" suppressHydrationWarning>
         <MusicProvider>
           {/*
@@ -33,9 +61,13 @@ export default function RootLayout({
            * coordination (e.g. start music after preloader) is trivial.
            */}
           <PreloaderWrapper />
-          <Navbar />
-          <MusicNudge />
-          {children}
+          <SmoothScroll>
+            <div className="hide-until-preloader">
+              <Navbar />
+              <MusicNudge />
+              {children}
+            </div>
+          </SmoothScroll>
         </MusicProvider>
       </body>
     </html>

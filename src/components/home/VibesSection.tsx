@@ -1,6 +1,6 @@
 'use client';
 
-import React, { RefObject, useRef, useState, useEffect } from 'react';
+import React, { RefObject, useRef, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import FallingText from '@/components/FallingText/FallingText';
 import { motion, useInView } from 'motion/react';
@@ -34,7 +34,42 @@ const DRAG_IMAGES = [
   },
 ];
 
-// ─── 3D Tilt + Drag Card ──────────────────────────────────────────────────────
+// ─── Seamless Top & Bottom SVG Waves with Shadows & Blending ──────────────────
+const SECTION_BG_COLOR = '#fefae0';
+
+function TopWave() {
+  return (
+    <div className="absolute top-0 left-0 w-full pointer-events-none" style={{ height: '9vw', minHeight: 90, zIndex: 30, transform: 'translateY(-1px)' }}>
+      {/* Added a drop-shadow to create depth and connection with the background below */}
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-full block" style={{ filter: 'drop-shadow(0px 12px 18px rgba(132,123,26,0.18))' }}>
+        {/* Soft, semi-transparent transition wave */}
+        <path d="M0,0 L1440,0 L1440,80 C1260,80 1140,24 720,24 C300,24 180,80 0,80 Z" fill="rgba(254, 250, 224, 0.45)" />
+        {/* Solid background wave */}
+        <path d="M0,0 L1440,0 L1440,60 C1260,60 1140,4 720,4 C300,4 180,60 0,60 Z" fill={SECTION_BG_COLOR} />
+        {/* Subtle gold stroke */}
+        <path d="M0,60 C180,60 300,4 720,4 C1140,4 1260,60 1440,60" stroke="rgba(132,123,26,0.2)" strokeWidth="1.5" fill="none" />
+      </svg>
+    </div>
+  );
+}
+
+function BottomWave() {
+  return (
+    <div className="absolute bottom-0 left-0 w-full pointer-events-none" style={{ height: '9vw', minHeight: 90, zIndex: 30, transform: 'translateY(1px)' }}>
+      {/* Reverse drop shadow for the bottom layer */}
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-full block transform rotate-180" style={{ filter: 'drop-shadow(0px -12px 18px rgba(132,123,26,0.18))' }}>
+        {/* Soft, semi-transparent transition wave */}
+        <path d="M0,0 L1440,0 L1440,80 C1260,80 1140,24 720,24 C300,24 180,80 0,80 Z" fill="rgba(254, 250, 224, 0.45)" />
+        {/* Solid background wave */}
+        <path d="M0,0 L1440,0 L1440,60 C1260,60 1140,4 720,4 C300,4 180,60 0,60 Z" fill={SECTION_BG_COLOR} />
+        {/* Subtle gold stroke */}
+        <path d="M0,60 C180,60 300,4 720,4 C1140,4 1260,60 1440,60" stroke="rgba(132,123,26,0.2)" strokeWidth="1.5" fill="none" />
+      </svg>
+    </div>
+  );
+}
+
+// ─── Interactive Cards ────────────────────────────────────────────────────────
 function TiltDragCard({
   img,
   boxRef,
@@ -51,24 +86,21 @@ function TiltDragCard({
   const [isHovering, setIsHovering] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
 
-  // Timeline: run entrance only once, after sectionInView turns true
   useEffect(() => {
     if (!sectionInView || hasAnimated || !tiltRef.current) return;
     setHasAnimated(true);
 
-    // Stagger: each card waits a bit longer than the previous
-    // Yoyo: scale overshoots then settles — back.out gives the bounce
     gsap.fromTo(
       tiltRef.current,
-      { opacity: 0, y: 70, scale: 0.82, rotate: img.initialRotate * 2 },
+      { opacity: 0, y: 100, scale: 0.8, rotate: img.initialRotate * 2 },
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        rotate: 0,
-        duration: 1,
-        delay: 0.6 + 0.48 * index,   // heading=0, eyebrow=0.2, cards start at 0.6
-        ease: 'back.out(1.6)',         // yoyo-style overshoot
+        rotate: img.initialRotate,
+        duration: 1.2,
+        delay: 0.15 * index,
+        ease: 'back.out(1.4)',
       }
     );
   }, [sectionInView, hasAnimated, index, img.initialRotate]);
@@ -92,8 +124,12 @@ function TiltDragCard({
     setIsHovering(false);
     if (!tiltRef.current) return;
     gsap.to(tiltRef.current, {
-      rotationY: 0, rotationX: 0, scale: 1,
-      duration: 0.7, ease: 'elastic.out(1, 0.55)',
+      rotationY: 0,
+      rotationX: 0,
+      scale: 1,
+      rotate: img.initialRotate,
+      duration: 0.7,
+      ease: 'elastic.out(1, 0.55)',
     });
   };
 
@@ -106,10 +142,17 @@ function TiltDragCard({
       onDragEnd={() => {
         setIsDragging(false);
         if (tiltRef.current) {
-          gsap.to(tiltRef.current, { rotationY: 0, rotationX: 0, scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+          gsap.to(tiltRef.current, {
+            rotationY: 0,
+            rotationX: 0,
+            scale: 1,
+            rotate: img.initialRotate,
+            duration: 0.5,
+            ease: 'elastic.out(1, 0.5)',
+          });
         }
       }}
-      style={{ rotate: img.initialRotate, zIndex: isDragging ? 50 : 20, position: 'relative' }}
+      style={{ zIndex: isDragging ? 50 : 20, position: 'relative' }}
       whileDrag={{ scale: 1.08 }}
     >
       <div
@@ -123,13 +166,12 @@ function TiltDragCard({
           width: 280,
           height: 320,
           filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.22))',
-          // Start hidden until GSAP triggers
           opacity: sectionInView ? undefined : 0,
         }}
       >
         <div
           className="w-full h-full rounded-2xl overflow-hidden relative"
-          style={{ border: '2.5px solid rgba(255,255,255,0.7)' }}
+          style={{ border: '2.5px solid rgba(255,255,255,0.7)', position: 'relative' }}
         >
           <Image
             src={img.src}
@@ -139,7 +181,6 @@ function TiltDragCard({
             priority={img.priority}
             className="object-cover"
             draggable={false}
-            style={{ zIndex: 0 }}
           />
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-300"
@@ -165,56 +206,27 @@ function TiltDragCard({
   );
 }
 
-// ─── Wave separator ───────────────────────────────────────────────────────────
-function WaveSeparator() {
-  return (
-    <div className="relative w-full overflow-hidden" style={{ height: 110, zIndex: 8, pointerEvents: 'none' }}>
-      <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
-        <path d="M0,55 C240,100 480,10 720,55 C960,100 1200,15 1440,55 L1440,110 L0,110 Z" fill="rgba(255,220,200,0.4)" />
-      </svg>
-      <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
-        <path d="M0,70 C360,20 720,95 1080,48 C1260,28 1380,78 1440,70 L1440,110 L0,110 Z" fill="rgba(255,200,170,0.5)" />
-      </svg>
-      <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
-        <path d="M0,86 C180,60 360,110 540,80 C720,48 900,102 1080,78 C1260,55 1380,94 1440,86 L1440,110 L0,110 Z" fill="rgba(253,235,220,0.9)" />
-      </svg>
-      {[
-        { left: '12%', delay: '0s', size: 5 },
-        { left: '33%', delay: '0.5s', size: 4 },
-        { left: '50%', delay: '0.9s', size: 6 },
-        { left: '68%', delay: '0.3s', size: 4 },
-        { left: '88%', delay: '0.7s', size: 5 },
-      ].map((dot, i) => (
-        <div key={i} className="absolute rounded-full animate-ping" style={{
-          left: dot.left, top: '42%', width: dot.size, height: dot.size,
-          background: 'rgba(200,120,80,0.5)', animationDelay: dot.delay, animationDuration: '2.4s',
-        }} />
-      ))}
-      <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
-        <span className="text-[10px] tracking-[0.5em] uppercase font-light select-none"
-          style={{ color: 'rgba(160,100,60,0.6)' }}>
-          ✦ &nbsp; memories ahead &nbsp; ✦
-        </span>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function VibesSection({ boxRef }: VibesSectionProps) {
-  // Single sentinel — when the section top enters viewport, kick off the timeline
   const sentinelRef = useRef<HTMLDivElement>(null);
   const sectionInView = useInView(sentinelRef, { once: true, amount: 0.2 });
 
-  return (
-    <div className="page4 w-full relative bg-no-repeat bg-cover">
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const cardsInView = useInView(cardsContainerRef, { once: true, margin: "-20% 0px" });
 
-      {/* Invisible sentinel at the very top of section */}
+  const highlightedWords = useMemo(() => ["Ritika 💫", "Sakhi 🦋", "Birthday 🎂", "Happy 😊", "Genuine 💕", "Warm 🔥", "Bubbly 💖"], []);
+
+  return (
+    <div className="page4 w-full relative bg-no-repeat bg-cover overflow-hidden" style={{ minHeight: '100vh', position: 'relative' }}>
+
+      {/* Shadows and translucent overlapping layers for seamless blending */}
+      <TopWave />
+      <BottomWave />
+
       <div ref={sentinelRef} className="absolute top-0 left-0 w-full h-1 pointer-events-none" style={{ zIndex: -1 }} />
 
-      {/* Background — z-index 0 */}
       <Image
-        src="/flowers/Flower_bg.jpg"
+        src="https://images.unsplash.com/photo-1602615576820-ea14cf3e476a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         loading="lazy"
         alt="Flower background"
         fill
@@ -223,45 +235,35 @@ export default function VibesSection({ boxRef }: VibesSectionProps) {
         style={{ zIndex: 0 }}
       />
 
-      {/* FallingText — z-index 2, pointer-events auto */}
-      <div className="falling-text absolute left-0 top-0 h-full w-full" style={{ zIndex: 2, pointerEvents: 'auto' }}>
+      {/* FallingText Layer */}
+      <div className="falling-text absolute left-0 top-0 h-full w-full" style={{ zIndex: 10, pointerEvents: 'auto' }}>
         <FallingText
-          text="Happy 😊 Birthday 🎂 Ritika 💫 Sakhi 🦋 Bubbly 💖 Genuine 💕 Warm 🔥   One-of-a-kind 🌟 Sweet 🍬 Cute 🥰 Smart 🧠 Kind 🤝  🌈 Joyful 🎉 Lively ⚡ Gentle 🕊️ Heartfelt 💝"
-          highlightWords={["Ritika 💫", "Sakhi 🦋", "Birthday 🎂", "Happy 😊", "Genuine 💕", "Warm 🔥", "Bubbly 💖"]}
+          text="Happy 😊 Birthday 🎂 Ritika 💫 Sakhi 🦋 Bubbly 💖 Genuine 💕 Warm 🔥  Sweet 🍬 Cute 🥰 Smart 🧠 Kind 🤝  🌈 Joyful 🎉 Lively ⚡ Gentle 🕊️ Heartfelt 💝"
+          highlightWords={highlightedWords}
           highlightClass="text-[#847B1A] font-serif font-bold border border-[#847B1A]/25 bg-white/75 px-4 py-2.5 rounded-full shadow-md backdrop-blur-md transition-transform duration-200"
           wordClass="text-[#a39732] font-mono font-semibold opacity-90 border border-[#a39732]/15 bg-white/45 px-3 py-1.5 rounded-full shadow-sm backdrop-blur-sm transition-transform duration-200"
-          fontSize="clamp(1.1rem, 2.5vw, 2rem)"
+          fontSize="clamp(1rem, 2.2vw, 1.8rem)"
           trigger="scroll"
         />
       </div>
 
-      {/*
-        ── TIMELINE ORDER ──
-        1. Eyebrow label  (delay 0,    duration 0.5)
-        2. "VIBES" word   (delay 0.2,  duration 0.65)  ← yoyo: scale 0.7 → 1.04 → 1
-        3. Bottom rule    (delay 0.45, duration 0.5)
-        4. Cards          (delay 0.6–1.1, staggered, back.out bounce)
-        All triggered once sectionInView = true.
-      */}
-      <div className="relative flex flex-col items-center pt-10 pb-4" style={{ zIndex: 10 }}>
-
-        {/* 1. Eyebrow */}
+      {/* Header Container */}
+      <div className="relative flex flex-col items-center pt-32 pb-4" style={{ zIndex: 10 }}>
         <motion.div
           className="flex items-center gap-4 mb-3"
           initial={{ opacity: 0, y: -12 }}
           animate={sectionInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         >
           <div style={{ width: 50, height: 1, background: 'linear-gradient(to right, transparent, rgba(132,123,26,0.5))' }} />
-          <span style={{ fontSize: 10, letterSpacing: '0.45em', color: 'rgba(132,123,26,0.6)', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: 10, letterSpacing: '0.45em', color: 'rgba(132,123,26,0.8)', textTransform: 'uppercase' }}>
             her world
           </span>
           <div style={{ width: 50, height: 1, background: 'linear-gradient(to left, transparent, rgba(132,123,26,0.5))' }} />
         </motion.div>
 
-        {/* 2. VIBES — yoyo scale overshoot */}
         <motion.h1
-          className="font-serif uppercase select-none"
+          className="font-awesome uppercase select-none"
           style={{
             fontSize: 'clamp(4.5rem, 10vw, 9rem)',
             color: '#847B1A',
@@ -273,57 +275,43 @@ export default function VibesSection({ boxRef }: VibesSectionProps) {
           animate={sectionInView ? { opacity: 1, scale: [0.7, 1.06, 1], y: 0 } : {}}
           transition={{
             duration: 0.75,
-            delay: 0.2,
+            delay: 0.1,
             ease: 'easeOut',
             scale: { times: [0, 0.65, 1], ease: ['easeOut', 'easeInOut'] },
           }}
         >
           Vibes
         </motion.h1>
-
-        {/* 3. Diamond rule — draws from centre outward */}
-        <motion.div
-          className="flex items-center gap-3 mt-3"
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={sectionInView ? { opacity: 1, scaleX: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.45, ease: 'easeOut' }}
-          style={{ transformOrigin: 'center' }}
-        >
-          <div style={{ width: 60, height: 1, background: 'linear-gradient(to right, transparent, rgba(132,123,26,0.45))' }} />
-          <svg width="10" height="10" viewBox="0 0 10 10">
-            <polygon points="5,0 10,5 5,10 0,5" fill="rgba(132,123,26,0.55)" />
-          </svg>
-          <div style={{ width: 60, height: 1, background: 'linear-gradient(to left, transparent, rgba(132,123,26,0.45))' }} />
-        </motion.div>
       </div>
 
-      {/* 4. Cards — each staggered via GSAP inside TiltDragCard */}
+      {/* 4-Set Responsive Grid Block */}
       <div
         ref={boxRef}
-        className="layout-area w-full flex justify-center items-center py-10 px-4"
+        className="layout-area w-full flex flex-col justify-center items-center pt-16 pb-36 px-4"
         style={{ position: 'relative', zIndex: 20, perspective: '1000px' }}
       >
-        <div className="grid grid-cols-2 gap-8 p-8">
+        <div
+          ref={cardsContainerRef}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 max-w-4xl place-items-center mb-8 p-4"
+        >
           {DRAG_IMAGES.map((img, i) => (
             <TiltDragCard
               key={img.src}
               img={img}
               boxRef={boxRef}
               index={i}
-              sectionInView={sectionInView}
+              sectionInView={cardsInView}
             />
           ))}
         </div>
 
         <p
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.5em] uppercase select-none pointer-events-none"
-          style={{ color: 'rgba(140,110,60,0.45)', zIndex: 5 }}
+          className="text-[10px] tracking-[0.5em] uppercase select-none pointer-events-none mt-4"
+          style={{ color: 'rgba(140,110,60,0.8)', zIndex: 5, fontWeight: 600 }}
         >
           hold &amp; drag the photos
         </p>
       </div>
-
-      <WaveSeparator />
     </div>
   );
 }

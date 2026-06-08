@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { useGSAP } from '@gsap/react';
+import { useMusicStore } from '@/context/MusicContext';
 
 gsap.registerPlugin(Observer);
 
@@ -38,6 +39,7 @@ export default function InfiniteScroll({
   autoplayDirection = 'down',
   pauseOnHover = false,
 }: InfiniteScrollProps) {
+  const { preloaderFinished } = useMusicStore();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,12 +51,16 @@ export default function InfiniteScroll({
   };
 
   useGSAP(() => {
+    if (!preloaderFinished) return;
+
     const tl = gsap.timeline();
     tl.from('.Spring-flowers2', { x: -10, opacity: 0, duration: 1.5, delay: 0.1, scrub: 3, ease: 'expo.inOut' });
     tl.from('.list-elems', { y: 10, opacity: 0, duration: 1, scrub: 3, ease: 'expo.inOut' });
-  });
+  }, [preloaderFinished]);
 
   useEffect(() => {
+    if (!preloaderFinished) return;
+
     const container = containerRef.current;
     if (!container || items.length === 0) return;
     const divItems = gsap.utils.toArray<HTMLElement>(container.children);
@@ -104,7 +110,7 @@ export default function InfiniteScroll({
       return () => { observer.kill(); if (rafId) cancelAnimationFrame(rafId); };
     }
     return () => { observer.kill(); if (rafId) cancelAnimationFrame(rafId); };
-  }, [items, autoplay, autoplaySpeed, autoplayDirection, pauseOnHover, isTilted, tiltDirection, negativeMargin]);
+  }, [preloaderFinished, items, autoplay, autoplaySpeed, autoplayDirection, pauseOnHover, isTilted, tiltDirection, negativeMargin]);
 
   return (
     <div

@@ -18,7 +18,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useMusicStore } from './MusicProvider';
+import { useMusicStore } from '@/context/MusicContext';
 
 // ── Lazy-load the heavy Preloader — no SSR ────────────────────────────────────
 const Preloader = dynamic(() => import('./Preloader'), { ssr: false });
@@ -42,13 +42,22 @@ export default function PreloaderWrapper() {
     return () => {
       // Safety restore if component unmounts before onComplete fires
       document.body.style.overflow = prev;
+      // Safety cleanup: ensure js-loading is removed if this wrapper unmounts
+      document.documentElement.classList.remove('js-loading');
     };
   }, []);
+
+  useEffect(() => {
+    if (show === false) {
+      document.documentElement.classList.remove('js-loading');
+    }
+  }, [show]);
 
   const handleComplete = () => {
     document.body.style.overflow = '';
     setShow(false);
     setPreloaderFinished(true);
+    document.documentElement.classList.remove('js-loading');
   };
 
   // null = SSR / not mounted yet → render nothing (no flash)

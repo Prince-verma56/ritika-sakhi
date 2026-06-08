@@ -22,7 +22,7 @@ const CircularText: React.FC<CircularTextProps> = ({
   const controls = useAnimation();
   const rotation = useMotionValue(0);
 
-  const startSpin = (duration: number, scale = 1) => {
+  const startSpin = (duration: number, scale = 0.9) => {
     const start = rotation.get();
     controls.start({
       rotate: [start, start + 360],

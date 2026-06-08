@@ -1,50 +1,128 @@
 'use client';
 
-import React from 'react';
-import InfiniteScroll from '@/components/InfiniteScroll/InfiniteScroll';
+import React, { useRef } from 'react';
+import Image from 'next/image';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import ScrollTrigger from 'gsap/ScrollTrigger';
 
-const items = [
-  { content: "(1). Where Do I Start.." },
-  { content: <p key="1">&ldquo;Ritika has this energy that is genuinely rare — playful in one breath, grounded in the next, and completely real in both. That combination does not come along often.&rdquo;</p> },
-  { content: "(2). And Then There Is This.." },
-  { content: <p key="2">&ldquo;She actually listens — not to respond, but to understand. Most people do not do that. She does, and that difference is bigger than it sounds.&rdquo;</p> },
-  { content: "(3). Worth Saying Out Loud.." },
-  { content: <p key="3">&ldquo;B.Tech vs BCA never felt like a gap with her. She looked at the work, appreciated it on its own terms, and never once slipped in a comparison. That takes a certain kind of character.&rdquo;</p> },
-  { content: "(4). The Honest Part.." },
-  { content: <p key="4">&ldquo;You can say anything around her — serious, silly, the kind of things you would normally filter. And it all lands just fine. Conversations like that are hard to find.&rdquo;</p> },
-  { content: "(5). Remember That Deal?.." },
-  { content: <p key="5">&ldquo;Whoever gets placed first helps the other one get there too — it was said casually, but it was meant. Real commitments are rare in college. That one felt real.&rdquo;</p> },
-  { content: "(6). The Child-Person Energy.." },
-  { content: <p key="6">&ldquo;Completely unbothered and playful in one moment, unexpectedly mature and grounded in the next. Both versions are equally her, and both are equally worth knowing.&rdquo;</p> },
-  { content: "(7). The Last One. The True One.." },
-  { content: <p key="7">&ldquo;After college, most connections quietly fade. But some people leave a mark that stays regardless of distance or time. Ritika is one of those people — and that says everything.&rdquo;</p> },
-];
+gsap.registerPlugin(ScrollTrigger);
 
-export default function About() {
+interface AboutSectionProps {
+  bgImageSrc?: string;
+}
+
+export default function AboutSection({
+  bgImageSrc = 'https://res.cloudinary.com/dtslaveid/image/upload/v1780924646/premium_photo-1680507425822-f9066024f13b_c73nxp.avif' // <-- Change this path to your preferred background image
+}: AboutSectionProps) {
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLParagraphElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    // Premium staggered reveal on scroll
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top 75%', // Starts animation when the section is 75% from the top of the viewport
+        toggleActions: 'play none none reverse',
+      }
+    });
+
+    tl.from(labelRef.current, {
+      y: 20,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+    })
+      .from(titleRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 1.1,
+        ease: 'power3.out'
+      }, '-=0.5') // Overlaps slightly with previous animation for organic flow
+      .from(dividerRef.current, {
+        scaleX: 0,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        transformOrigin: 'center'
+      }, '-=0.6')
+      .from(textRef.current, {
+        y: 30,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out'
+      }, '-=0.4');
+
+  }, { scope: containerRef });
+
   return (
-    <>
-      <div className="w-full h-auto bg-[#fefae0]">
-        <div className="h-[85vh] w-full mt-[2px] relative">
-          <div
-            className="flower-area w-full h-50 absolute z-[77] top-0"
-            style={{
-              backgroundImage: `url('/flowers/Flowere_FLip.png')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
-          <InfiniteScroll
-            items={items}
-            isTilted={true}
-            tiltDirection="left"
-            autoplay={true}
-            autoplaySpeed={0.1}
-            autoplayDirection="down"
-            pauseOnHover={true}
-          />
-        </div>
+    <section
+      ref={containerRef}
+      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 py-24"
+    >
+      {/* ── Background Image Using Next.js Image Tag ── */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none">
+        <Image
+          src={bgImageSrc}
+          alt="About Background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+
+        {/* Premium editorial overlay to balance readability with the image details */}
+        <div
+          className="absolute inset-0 mix-blend-normal"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(254,250,224,0.88) 0%, rgba(250,246,212,0.0092) 50%, rgba(254,250,224,0.088) 100%)'
+          }}
+        />
       </div>
-    </>
+
+      {/* ── Centered Content Layer ── */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-3xl w-full mx-auto pointer-events-none">
+
+        {/* Section Label */}
+        <p
+          ref={labelRef}
+          className="font-mono text-[10px] tracking-[0.5em] uppercase mb-4 text-[#847B1A] opacity-80"
+        >
+          00 · About Her
+        </p>
+
+        {/* Large Centered Title */}
+        <h2
+          ref={titleRef}
+          className="font-lirrier text-[#4e4a0e] tracking-tight leading-[1.1] mb-6"
+          style={{ fontSize: 'clamp(2.5rem, 5.5vw, 4.8rem)' }}
+        >
+          Abhi Mai Janta hi nhi Ullu Tujhe Zyada 👀.
+        </h2>
+
+        {/* Elegant Minimalist Line Divider */}
+        <div
+          ref={dividerRef}
+          className="h-[1px] w-24 my-4"
+          style={{ background: 'linear-gradient(to right, transparent, #847B1A, transparent)' }}
+        />
+
+        {/* Storytelling Subtext */}
+        <p
+          ref={textRef}
+          className="font-mono font-bold text-sm md:text-base tracking-wide whitespace-nowrap text-[#0e0d00]/70 leading-relaxed max-w-2xl mt-4"
+        >
+          But if in future we wokr more together so i will know and update here also 🫠.
+        </p>
+
+      </div>
+    </section>
   );
 }

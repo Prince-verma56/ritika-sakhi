@@ -1,10 +1,7 @@
-
 'use client';
 
-import React, {
-  createContext, useContext, useRef, useState,
-  useCallback, useEffect, useLayoutEffect,
-} from 'react';
+import React, { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import { MusicContext, MusicCtx } from '@/context/MusicContext';
 
 // /sounds/ArzKiyaHaiFull.mp3
 
@@ -13,27 +10,6 @@ const MUSIC_SRC = '/sounds/ArzKiyaHaiFull.mp3';
 const FADE_IN_DURATION = 1.2;   // seconds
 const FADE_OUT_DURATION = 1.2;
 const AUTOPLAY_DELAY_MS = 300;   // ms after gesture before music starts
-
-// ─── Context ──────────────────────────────────────────────────────────────────
-interface MusicCtx {
-  playing: boolean;
-  volume: number;
-  unlocked: boolean;   // true = browser allowed audio (gesture done)
-  needsGesture: boolean;   // true = show the "tap to play" nudge
-  preloaderFinished: boolean; // coordinates entrance animations when preloader is done
-  toggle: () => void;
-  setVolume: (v: number) => void;
-  dismissNudge: () => void; // user tapped nudge → unlock + play
-  setPreloaderFinished: (finished: boolean) => void;
-}
-
-const MusicContext = createContext<MusicCtx | null>(null);
-
-export function useMusicStore() {
-  const ctx = useContext(MusicContext);
-  if (!ctx) throw new Error('useMusicStore must be used inside MusicProvider');
-  return ctx;
-}
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 export function MusicProvider({ children }: { children: React.ReactNode }) {
@@ -154,6 +130,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     if (!audio) return;
 
     let delayTimer: ReturnType<typeof setTimeout>;
+    let nudgeTimer: ReturnType<typeof setTimeout>;
 
     const doPlay = () => {
       clearTimeout(delayTimer);
@@ -165,6 +142,9 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
     // Attempt silent autoplay
     audio.volume = 0;
+
+    let removeListeners: (() => void) | null = null;
+
     audio.play()
       .then(() => {
         unlockedRef.current = true;
@@ -180,7 +160,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         pendingPlayRef.current = true;
 
         // Show nudge after a short delay so page loads first
-        const nudgeTimer = setTimeout(() => {
+        nudgeTimer = setTimeout(() => {
           if (pendingPlayRef.current) setNeedsGesture(true);
         }, 1200);
 
@@ -191,21 +171,25 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
           setUnlocked(true);
           setNeedsGesture(false);
           clearTimeout(nudgeTimer);
-          cleanup();
+          if (removeListeners) removeListeners();
           doPlay();
         };
 
-        const cleanup = () => {
-          (['click', 'touchstart', 'keydown', 'scroll', 'mousemove', 'pointerdown'] as const)
+        removeListeners = () => {
+          (['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown'] as const)
             .forEach(ev => window.removeEventListener(ev, unlock, true));
         };
 
         // Capture phase = fires before React handlers = most reliable
-        (['click', 'touchstart', 'keydown', 'scroll', 'mousemove', 'pointerdown'] as const)
+        (['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown'] as const)
           .forEach(ev => window.addEventListener(ev, unlock, { once: true, capture: true, passive: true }));
       });
 
-    return () => { clearTimeout(delayTimer); };
+    return () => {
+      clearTimeout(delayTimer);
+      clearTimeout(nudgeTimer);
+      if (removeListeners) removeListeners();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on mount — audio element never remounts
 

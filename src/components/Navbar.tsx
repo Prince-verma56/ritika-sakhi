@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { motion, AnimatePresence } from 'motion/react';
-import { useMusicStore } from './MusicProvider';
+import { useMusicStore } from '@/context/MusicContext';
 
 const GOLD      = '#847B1A';
 const GOLD_DARK = '#4e4a0e';
@@ -22,11 +22,11 @@ const GLASS_BDR = 'rgba(132,123,26,0.14)';
 const LEFT_LINKS = [
   { href: '/',        label: 'Home'         },
   { href: '/meet-us', label: 'Meet us'      },
-  { href: '/gallery', label: 'Gallery'      },
+  // { href: '/gallery', label: 'Gallery'      },
 ];
 const RIGHT_LINKS = [
-  { href: '/gratitude', label: 'Gratitude'    },
-  { href: '/memories',  label: 'Memories'     },
+  // { href: '/gratitude', label: 'Gratitude'    },
+  { href: '/gallery',  label: 'Gallery'     },
   { href: '/about',     label: 'About Ritika' },
 ];
 
@@ -196,6 +196,8 @@ export default function Navbar() {
   const pathname  = usePathname();
   const navbarRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
+  const hiddenRef = useRef(false);
+  const lastYRef = useRef(0);
 
   // All music state comes from the persistent provider
   const { playing, volume, toggle, setVolume, preloaderFinished } = useMusicStore();
@@ -222,34 +224,55 @@ export default function Navbar() {
 
   // ── Scroll hide/show + glass ─────────────────────────────────────────────
   useEffect(() => {
-    let lastY = window.scrollY, hidden = false, rafId = 0, pending = false;
+    let rafId = 0, pending = false;
+    lastYRef.current = window.scrollY;
     const onScroll = () => {
       if (pending) return; pending = true;
       rafId = requestAnimationFrame(() => {
         pending = false;
         const y = window.scrollY;
-        if (!navbarRef.current) { lastY = y; return; }
+        if (!navbarRef.current) { lastYRef.current = y; return; }
         setScrolled(y > 40);
         if (y < 50) {
-          if (hidden) { gsap.to(navbarRef.current, { y: 0, duration: 0.75, ease: 'power3.out', overwrite: true }); hidden = false; }
-          lastY = y; return;
+          if (hiddenRef.current) {
+            gsap.to(navbarRef.current, { y: 0, duration: 0.75, ease: 'power3.out', overwrite: true });
+            hiddenRef.current = false;
+          }
+          lastYRef.current = y;
+          return;
         }
-        const d = y - lastY;
-        if (Math.abs(d) < 8) { lastY = y; return; }
-        if (d > 0 && !hidden) { gsap.to(navbarRef.current, { y: -120, duration: 0.7, ease: 'power3.inOut', overwrite: true }); hidden = true; }
-        else if (d < 0 && hidden) { gsap.to(navbarRef.current, { y: 0, duration: 0.72, ease: 'power3.out', overwrite: true }); hidden = false; }
-        lastY = y;
+        const d = y - lastYRef.current;
+        if (Math.abs(d) < 8) { lastYRef.current = y; return; }
+        if (d > 0 && !hiddenRef.current) {
+          gsap.to(navbarRef.current, { y: -120, duration: 0.7, ease: 'power3.inOut', overwrite: true });
+          hiddenRef.current = true;
+        }
+        else if (d < 0 && hiddenRef.current) {
+          gsap.to(navbarRef.current, { y: 0, duration: 0.72, ease: 'power3.out', overwrite: true });
+          hiddenRef.current = false;
+        }
+        lastYRef.current = y;
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(rafId); };
   }, []);
 
+  // Reset Navbar state on route change
+  useEffect(() => {
+    if (navbarRef.current) {
+      gsap.to(navbarRef.current, { y: 0, duration: 0.5, ease: 'power3.out', overwrite: true });
+    }
+    hiddenRef.current = false;
+    lastYRef.current = 0;
+    setScrolled(false);
+  }, [pathname]);
+
   return (
     <>
       {/* No <audio> here — lives in MusicProvider */}
       <div ref={navbarRef} className="navbar-shell fixed top-0 left-0 w-full z-[999]"
-        style={{ willChange: 'transform', transition: 'background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease', background: scrolled ? GLASS_BG : 'transparent', borderBottom: scrolled ? `1px solid ${GLASS_BDR}` : '1px solid transparent', boxShadow: scrolled ? '0 4px 32px rgba(132,123,26,0.06)' : 'none', backdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'none', WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'none' }}
+        style={{ willChange: 'transform', transition: 'background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease', background: scrolled ? 'rgba(254, 250, 224, 0.85)' : 'rgba(254, 250, 224, 0.35)', borderBottom: scrolled ? `1px solid ${GLASS_BDR}` : '1px solid rgba(132, 123, 26, 0.05)', boxShadow: scrolled ? '0 4px 32px rgba(132,123,26,0.06)' : 'none', backdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'blur(8px) saturate(1.1)', WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'blur(8px) saturate(1.1)' }}
       >
         <nav className="w-[92%] lg:w-[80%] mx-auto flex items-center justify-between relative"
           style={{ height: scrolled ? 64 : 80, transition: 'height 0.4s ease' }}>
@@ -263,7 +286,7 @@ export default function Navbar() {
           </div>
 
           <div className="navbar-logo flex-shrink-0 relative"
-            style={{ width: scrolled ? 72 : 96, height: scrolled ? 72 : 96, transition: 'width 0.4s ease, height 0.4s ease' }}>
+            style={{ width: scrolled ? 72 : 96, height: scrolled ? 72 : 96, transition: 'width 0.4s ease, height 0.4s ease', position: 'relative' }}>
             <motion.div className="absolute inset-0 pointer-events-none"
               style={{ border: '1px dashed rgba(132,123,26,0.2)', borderRadius: '50%' }}
               animate={playing ? { rotate: 360 } : { rotate: 0 }}
@@ -297,8 +320,6 @@ export default function Navbar() {
             style={{ height: '100%', width: '80%', margin: '0 auto', background: `linear-gradient(to right, transparent, ${GOLD_LINE}, ${GOLD_SOFT}, ${GOLD_LINE}, transparent)`, transformOrigin: 'center' }} />
         </div>
       </div>
-
-      {pathname !== '/' && <div style={{ height: 80 }} />}
     </>
   );
 }

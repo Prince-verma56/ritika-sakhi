@@ -14,13 +14,13 @@ function Diamond({ size = 6, opacity = 0.5 }: { size?: number; opacity?: number 
 }
 
 export default function AboutSection() {
-  const leftRef    = useRef<HTMLDivElement>(null);
-  const rightRef   = useRef<HTMLDivElement>(null);
-  const bottomRef  = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const leftInView   = useInView(leftRef,   { once: true, amount: 0.18 });
-  const rightInView  = useInView(rightRef,  { once: true, amount: 0.18 });
-  const bottomInView = useInView(bottomRef, { once: true, amount: 0.4  });
+  const leftInView = useInView(leftRef, { once: true, amount: 0.18 });
+  const rightInView = useInView(rightRef, { once: true, amount: 0.18 });
+  const bottomInView = useInView(bottomRef, { once: true, amount: 0.4 });
 
   return (
     <div
@@ -38,24 +38,31 @@ export default function AboutSection() {
           <circle cx="260" cy="260" r="200" stroke="rgba(132,123,26,0.05)" strokeWidth="1" />
           <circle cx="260" cy="260" r="160" stroke="rgba(132,123,26,0.04)" strokeWidth="1" />
           {/* 8 radial spokes */}
-          {[0,45,90,135,180,225,270,315].map(a => (
-            <line key={a}
-              x1={260 + 160 * Math.cos(a * Math.PI/180)}
-              y1={260 + 160 * Math.sin(a * Math.PI/180)}
-              x2={260 + 240 * Math.cos(a * Math.PI/180)}
-              y2={260 + 240 * Math.sin(a * Math.PI/180)}
-              stroke="rgba(132,123,26,0.06)" strokeWidth="1"
-            />
-          ))}
+          {[0, 45, 90, 135, 180, 225, 270, 315].map(a => {
+            const rad = a * Math.PI / 180;
+            const x1Val = (260 + 160 * Math.cos(rad)).toFixed(4);
+            const y1Val = (260 + 160 * Math.sin(rad)).toFixed(4);
+            const x2Val = (260 + 240 * Math.cos(rad)).toFixed(4);
+            const y2Val = (260 + 240 * Math.sin(rad)).toFixed(4);
+            return (
+              <line key={a}
+                x1={x1Val}
+                y1={y1Val}
+                x2={x2Val}
+                y2={y2Val}
+                stroke="rgba(132,123,26,0.06)" strokeWidth="1"
+              />
+            );
+          })}
         </svg>
       </div>
 
       {/* Corner ornament — bottom left */}
       <div className="absolute pointer-events-none" style={{ bottom: '80px', left: '0', zIndex: 0 }}>
         <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
-          <path d="M0 220 Q 0 0 220 0" stroke="rgba(132,123,26,0.08)" strokeWidth="1" fill="none"/>
-          <path d="M0 180 Q 0 40 180 40" stroke="rgba(132,123,26,0.06)" strokeWidth="1" fill="none"/>
-          <path d="M0 140 Q 0 80 140 80" stroke="rgba(132,123,26,0.05)" strokeWidth="1" fill="none"/>
+          <path d="M0 220 Q 0 0 220 0" stroke="rgba(132,123,26,0.08)" strokeWidth="1" fill="none" />
+          <path d="M0 180 Q 0 40 180 40" stroke="rgba(132,123,26,0.06)" strokeWidth="1" fill="none" />
+          <path d="M0 140 Q 0 80 140 80" stroke="rgba(132,123,26,0.05)" strokeWidth="1" fill="none" />
         </svg>
       </div>
 
@@ -71,7 +78,7 @@ export default function AboutSection() {
         className="absolute top-0 left-0 w-full pointer-events-none"
         style={{ height: 1, background: 'linear-gradient(to right,transparent 0%,rgba(132,123,26,0.3) 25%,rgba(132,123,26,0.3) 75%,transparent 100%)', zIndex: 2 }}
         initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-        transition={{ duration: 1.3, ease: [0.22,1,0.36,1] }}
+        transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
       />
 
       {/* ═══════════════════════════════════
@@ -85,7 +92,7 @@ export default function AboutSection() {
           className="w-full lg:w-[52%] flex flex-col justify-center"
           initial={{ opacity: 0, x: -48 }}
           animate={leftInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.9, ease: [0.22,1,0.36,1] }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* Section index */}
           <motion.div
@@ -103,22 +110,24 @@ export default function AboutSection() {
           {/* Name plate */}
           <div className="overflow-hidden mb-1">
             <motion.h1
-              style={{ fontFamily: 'Georgia,"Times New Roman",serif', fontSize: 'clamp(3rem,6vw,5rem)', fontWeight: 400, color: '#4e4a0e', lineHeight: 1, letterSpacing: '-0.01em' }}
+              className='relative left-1 font-lirrier '
+              style={{ fontSize: 'clamp(3rem,6vw,5rem)', fontWeight: 400, color: '#4e4a0e', lineHeight: 1, letterSpacing: '-0.01em' }}
               initial={{ y: 90, opacity: 0 }}
               animate={leftInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.75, delay: 0.2, ease: [0.22,1,0.36,1] }}
+              transition={{ duration: 0.75, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             >
-              Ritika
+              Khushi
             </motion.h1>
           </div>
           <div className="overflow-hidden mb-7">
             <motion.h2
-              style={{ fontFamily: 'Georgia,"Times New Roman",serif', fontSize: 'clamp(1rem,2.2vw,1.6rem)', fontWeight: 400, color: '#847B1A', lineHeight: 1, letterSpacing: '0.38em', textTransform: 'uppercase' }}
+              className='font-ohmynotes relative left-4 '
+              style={{ fontSize: 'clamp(1rem,2.2vw,1.6rem)', fontWeight: 400, color: '#847B1A', lineHeight: 1, letterSpacing: '0.38em', textTransform: 'uppercase' }}
               initial={{ y: 40, opacity: 0 }}
               animate={leftInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.32, ease: [0.22,1,0.36,1] }}
+              transition={{ duration: 0.6, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
-              Madam
+              Jii
             </motion.h2>
           </div>
 
@@ -133,7 +142,7 @@ export default function AboutSection() {
             }}
             initial={{ opacity: 0, y: 28 }}
             animate={leftInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.42, ease: [0.22,1,0.36,1] }}
+            transition={{ duration: 0.7, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Top border accent — animated gold bar */}
             <motion.div
@@ -146,21 +155,22 @@ export default function AboutSection() {
             <div className="p-7 lg:p-8">
               {/* Corner SVG ornaments inside box */}
               <div className="absolute top-3 left-3 pointer-events-none" style={{ opacity: 0.18 }}>
-                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 22 L0 0 L22 0" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 22 L0 0 L22 0" fill="none" stroke="#847B1A" strokeWidth="1.2" /></svg>
               </div>
               <div className="absolute top-3 right-3 pointer-events-none" style={{ opacity: 0.18 }}>
-                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 22 L22 0 L0 0" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 22 L22 0 L0 0" fill="none" stroke="#847B1A" strokeWidth="1.2" /></svg>
               </div>
               <div className="absolute bottom-3 left-3 pointer-events-none" style={{ opacity: 0.18 }}>
-                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 0 L0 22 L22 22" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M0 0 L0 22 L22 22" fill="none" stroke="#847B1A" strokeWidth="1.2" /></svg>
               </div>
               <div className="absolute bottom-3 right-3 pointer-events-none" style={{ opacity: 0.18 }}>
-                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 0 L22 22 L0 22" fill="none" stroke="#847B1A" strokeWidth="1.2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 22 22"><path d="M22 0 L22 22 L0 22" fill="none" stroke="#847B1A" strokeWidth="1.2" /></svg>
               </div>
 
               {/* Pull quote */}
               <motion.p
-                style={{ fontFamily: 'Georgia,serif', fontSize: 'clamp(0.9rem,1.5vw,1.05rem)', fontStyle: 'italic', color: '#6a6210', lineHeight: 1.65, paddingLeft: 14, borderLeft: '2px solid rgba(132,123,26,0.4)', marginBottom: 18 }}
+                className='font-lirrier'
+                style={{ fontSize: 'clamp(0.9rem,1.5vw,1.05rem)', fontStyle: 'italic', color: '#6a6210', lineHeight: 1.65, paddingLeft: 14, borderLeft: '2px solid rgba(132,123,26,0.4)', marginBottom: 18 }}
                 initial={{ opacity: 0, x: -12 }}
                 animate={leftInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.6 }}
@@ -181,7 +191,8 @@ export default function AboutSection() {
 
               {/* Body text */}
               <motion.p
-                style={{ fontFamily: 'monospace', fontSize: 'clamp(0.76rem,1.2vw,0.9rem)', color: 'rgba(48,44,18,0.72)', lineHeight: 2.0 }}
+                className='font-ohmynotes  text-lg md:text-xl'
+                style={{ color: 'rgba(48,44,18,0.72)', lineHeight: 2.0 }}
                 initial={{ opacity: 0, y: 14 }}
                 animate={leftInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.65, delay: 0.72 }}
@@ -212,9 +223,9 @@ export default function AboutSection() {
             transition={{ duration: 0.55, delay: 0.88 }}
           >
             {[
-              { label: 'Vibe',       value: 'Bubbly · Honest'  },
-              { label: 'Connection', value: 'Genuine · Deep'   },
-              { label: 'Energy',     value: 'Warm · Bright'    },
+              { label: 'Vibe', value: 'Bubbly · Honest' },
+              { label: 'Connection', value: 'Genuine · Deep' },
+              { label: 'Energy', value: 'Warm · Bright' },
             ].map((item, i) => (
               <React.Fragment key={item.label}>
                 {i > 0 && <div style={{ width: 1, background: 'rgba(132,123,26,0.14)', margin: '0 16px' }} />}
@@ -240,7 +251,7 @@ export default function AboutSection() {
               >
                 <span style={{ borderBottom: '1px solid rgba(132,123,26,0.4)', paddingBottom: 2 }}>Read more about her</span>
                 <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-                  <path d="M1 5h12M8 1l5 4-5 4" stroke="#847B1A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1 5h12M8 1l5 4-5 4" stroke="#847B1A" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
             </Link>
@@ -253,7 +264,7 @@ export default function AboutSection() {
           className="w-full lg:w-[48%] flex items-center justify-center relative"
           initial={{ opacity: 0, x: 52 }}
           animate={rightInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.95, delay: 0.12, ease: [0.22,1,0.36,1] }}
+          transition={{ duration: 0.95, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* Ambient glow */}
           <div className="absolute pointer-events-none" style={{
@@ -271,7 +282,7 @@ export default function AboutSection() {
               zIndex: 2,
             }}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.5, ease: [0.22,1,0.36,1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Decorative frame ring — sits behind the clipped image */}
             <div
@@ -308,16 +319,16 @@ export default function AboutSection() {
               {/* Image with zoom on hover */}
               <motion.div
                 className="absolute inset-0"
-                style={{ zIndex: 1 }}
+                style={{ zIndex: 1, position: 'absolute' }}
                 whileHover={{ scale: 1.08 }}
-                transition={{ duration: 0.9, ease: [0.22,1,0.36,1] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Image
                   src="https://res.cloudinary.com/dtslaveid/image/upload/v1780512397/ChatGPT_Image_Jun_3_2026_06_34_59_PM_aztjma.png"
                   fill
                   className="object-cover object-top"
-                  alt="Ritika Madam"
-                  loading="lazy"
+                  alt="Ritika (Khushi)"
+                  priority
                   sizes="(max-width: 768px) 100vw, 34vw"
                   style={{ zIndex: 1 }}
                 />
@@ -332,8 +343,8 @@ export default function AboutSection() {
                 background: 'linear-gradient(to top,rgba(55,46,8,0.62) 0%,transparent 100%)',
                 padding: '44px 22px 18px',
               }}>
-                <p style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.45em', color: 'rgba(255,248,190,0.55)', textTransform: 'uppercase', marginBottom: 3 }}>birthday girl</p>
-                <p style={{ fontFamily: 'Georgia,serif', fontSize: 18, color: 'rgba(255,252,215,0.96)', fontWeight: 400 }}>Ritika Madam</p>
+                <p className='font-bold text-lg' style={{ fontFamily: 'monospace', letterSpacing: '0.45em', color: 'rgba(255,248,190,0.55)', textTransform: 'uppercase', marginBottom: 3 }}>birthday girl</p>
+                <p className='font-medium text-xl' style={{ color: 'rgba(255,252,215,0.96)' }}>Ritika (Khushi)</p>
               </div>
             </div>
 
@@ -353,7 +364,7 @@ export default function AboutSection() {
               animate={rightInView ? { opacity: 1, y: 0, scale: 1 } : {}}
               transition={{ duration: 0.55, delay: 0.85, type: 'spring', stiffness: 160, damping: 16 }}
             >
-             
+
 
             </motion.div>
 
@@ -398,7 +409,7 @@ export default function AboutSection() {
         transition={{ duration: 0.6 }}
       >
         <div className="flex items-center gap-5 flex-wrap justify-center">
-          {['Bubbly','Honest','Genuine','Unforgettable','One of a Kind'].map((word, i, arr) => (
+          {['Bubbly', 'Honest', 'Genuine', 'Unforgettable', 'One of a Kind'].map((word, i, arr) => (
             <React.Fragment key={word}>
               <span style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(132,123,26,0.5)' }}>{word}</span>
               {i < arr.length - 1 && <Diamond size={3} opacity={0.2} />}
@@ -414,16 +425,16 @@ export default function AboutSection() {
       <div className="relative w-full pointer-events-none" style={{ height: 70, zIndex: 5, marginBottom: -1 }}>
         <svg viewBox="0 0 1440 70" preserveAspectRatio="none" className="w-full h-full">
           <path
-            d={`M0 70 ${ Array.from({length:9},(_,i)=>{
-              const x1=i*160, x2=(i+0.5)*160, x3=(i+1)*160;
-              return `C ${x1+80} 22, ${x2} 22, ${x3} 70`;
+            d={`M0 70 ${Array.from({ length: 9 }, (_, i) => {
+              const x1 = i * 160, x2 = (i + 0.5) * 160, x3 = (i + 1) * 160;
+              return `C ${x1 + 80} 22, ${x2} 22, ${x3} 70`;
             }).join(' ')} L1440 70 L0 70 Z`}
             fill="rgba(132,123,26,0.055)"
           />
           <path
-            d={`M0 70 ${ Array.from({length:9},(_,i)=>{
-              const x1=i*160, x2=(i+0.5)*160, x3=(i+1)*160;
-              return `C ${x1+80} 32, ${x2} 32, ${x3} 70`;
+            d={`M0 70 ${Array.from({ length: 9 }, (_, i) => {
+              const x1 = i * 160, x2 = (i + 0.5) * 160, x3 = (i + 1) * 160;
+              return `C ${x1 + 80} 32, ${x2} 32, ${x3} 70`;
             }).join(' ')} L1440 70 L0 70 Z`}
             fill="#fefae0"
           />

@@ -17,7 +17,7 @@ interface FallingTextProps {
 const FallingText: React.FC<FallingTextProps> = ({
   text = '',
   highlightWords = [],
-  trigger = 'scroll', // Updated: Changed default from 'auto' to 'scroll'
+  trigger = 'scroll',
   backgroundColor = 'transparent',
   wireframes = false,
   gravity = 1,
@@ -33,13 +33,20 @@ const FallingText: React.FC<FallingTextProps> = ({
   const [effectStarted, setEffectStarted] = useState(trigger === 'auto');
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
+  // FIXED: Standardize array reference checking to prevent infinite layout re-triggers
+  const highlightWordsStr = JSON.stringify(highlightWords);
+
   useEffect(() => {
     if (!containerRef.current) return;
     const resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
-        setDimensions({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height
+        const { width, height } = entry.contentRect;
+        // Only update if there is a real size change to avoid micro-layout fluctuations
+        setDimensions(prev => {
+          if (Math.abs(prev.width - width) > 5 || Math.abs(prev.height - height) > 5) {
+            return { width, height };
+          }
+          return prev;
         });
       }
     });
@@ -50,14 +57,11 @@ const FallingText: React.FC<FallingTextProps> = ({
   useEffect(() => {
     if (!textRef.current) return;
 
-    // Group words with emojis or symbols
     const words: string[] = [];
     const rawTokens = text.split(/\s+/);
 
     for (const token of rawTokens) {
       if (token === '') continue;
-      // If this token does not contain alphanumeric characters (is an emoji or symbol)
-      // and we already have a word, append it with a non-breaking space!
       if (!/[a-zA-Z0-9]/.test(token) && words.length > 0) {
         words[words.length - 1] += `\u00A0${token}`;
       } else {
@@ -68,20 +72,16 @@ const FallingText: React.FC<FallingTextProps> = ({
     const newHTML = words
       .map(word => {
         const cleanWordForCheck = word.replace(/\u00A0/g, ' ');
-        const isHighlighted = highlightWords.some(hw => 
+        const isHighlighted = highlightWords.some(hw =>
           cleanWordForCheck.startsWith(hw) || hw.startsWith(cleanWordForCheck)
         );
         const currentClass = isHighlighted ? highlightClass : wordClass;
-        return `<span
-          class="inline-block mx-[4px] my-[2px] select-none ${currentClass}"
-        >
-          ${word}
-        </span>`;
+        return `<span class="inline-block mx-[4px] my-[2px] select-none ${currentClass}">${word}</span>`;
       })
       .join(' ');
 
     textRef.current.innerHTML = newHTML;
-  }, [text, highlightWords, highlightClass, wordClass]);
+  }, [text, highlightWordsStr, highlightClass, wordClass]); // FIXED: Safe dependency tracking
 
   useEffect(() => {
     if (trigger === 'scroll' && containerRef.current) {
@@ -106,7 +106,14 @@ const FallingText: React.FC<FallingTextProps> = ({
     const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint } = Matter;
 
     const currentContainer = containerRef.current;
-    if (!currentContainer || !canvasContainerRef.current) return;
+    if (!currentContainer || !canvasContainerRef.current || !textRef.current) return;
+
+    // FIXED: Lock inline wrapper sizes before making nodes absolute to prevent height collapse loops
+    const originalWidth = textRef.current.offsetWidth;
+    const originalHeight = textRef.current.offsetHeight;
+    textRef.current.style.width = `${originalWidth}px`;
+    textRef.current.style.height = `${originalHeight}px`;
+    textRef.current.style.position = 'relative';
 
     const width = dimensions.width;
     const height = dimensions.height;
@@ -135,7 +142,6 @@ const FallingText: React.FC<FallingTextProps> = ({
     const rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, boundaryOptions);
     const ceiling = Bodies.rectangle(width / 2, -25, width, 50, boundaryOptions);
 
-    if (!textRef.current) return;
     const wordSpans = textRef.current.querySelectorAll('span');
     const wordBodies = [...wordSpans].map(elem => {
       const rect = elem.getBoundingClientRect();
@@ -145,24 +151,25 @@ const FallingText: React.FC<FallingTextProps> = ({
 
       const body = Bodies.rectangle(x, y, rect.width, rect.height, {
         render: { fillStyle: 'transparent' },
-        restitution: 0.8,
-        frictionAir: 0.01,
-        friction: 0.2
+        restitution: 0.6,
+        frictionAir: 0.02,
+        friction: 0.1
       });
+
       Matter.Body.setVelocity(body, {
-        x: (Math.random() - 0.5) * 5,
-        y: 0
+        x: (Math.random() - 0.5) * 4,
+        y: (Math.random() - 0.5) * 2
       });
-      Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.05);
+      Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.02);
 
       return { elem, body };
     });
 
     wordBodies.forEach(({ elem, body }) => {
       elem.style.position = 'absolute';
-      elem.style.left = `${body.position.x - body.bounds.max.x + body.bounds.min.x / 2}px`;
-      elem.style.top = `${body.position.y - body.bounds.max.y + body.bounds.min.y / 2}px`;
-      elem.style.transform = 'none';
+      elem.style.left = `${body.position.x}px`;
+      elem.style.top = `${body.position.y}px`;
+      elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
     });
 
     const mouse = Mouse.create(currentContainer);
@@ -177,7 +184,6 @@ const FallingText: React.FC<FallingTextProps> = ({
 
     World.add(engine.world, [floor, leftWall, rightWall, ceiling, mouseConstraint, ...wordBodies.map(wb => wb.body)]);
 
-    // Mouse / Touch Hover Repulsion (pushed on hover)
     const handleMouseMove = (event: MouseEvent) => {
       const rect = currentContainer.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -189,7 +195,7 @@ const FallingText: React.FC<FallingTextProps> = ({
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < 130) {
-          const forceMagnitude = (130 - distance) * 0.00035;
+          const forceMagnitude = (130 - distance) * 0.0004;
           const angle = Math.atan2(dy, dx);
 
           Matter.Body.applyForce(body, body.position, {
@@ -212,7 +218,7 @@ const FallingText: React.FC<FallingTextProps> = ({
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < 130) {
-          const forceMagnitude = (130 - distance) * 0.00035;
+          const forceMagnitude = (130 - distance) * 0.0004;
           const angle = Math.atan2(dy, dx);
 
           Matter.Body.applyForce(body, body.position, {
@@ -230,6 +236,7 @@ const FallingText: React.FC<FallingTextProps> = ({
     Runner.run(runner, engine);
     Render.run(render);
 
+    let animationFrameId: number;
     const updateLoop = () => {
       wordBodies.forEach(({ body, elem }) => {
         const { x, y } = body.position;
@@ -237,14 +244,14 @@ const FallingText: React.FC<FallingTextProps> = ({
         elem.style.top = `${y}px`;
         elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
       });
-      Matter.Engine.update(engine);
-      requestAnimationFrame(updateLoop);
+      animationFrameId = requestAnimationFrame(updateLoop);
     };
     updateLoop();
 
     return () => {
       currentContainer.removeEventListener('mousemove', handleMouseMove);
       currentContainer.removeEventListener('touchmove', handleTouchMove);
+      cancelAnimationFrame(animationFrameId);
       Render.stop(render);
       Runner.stop(runner);
       if (render.canvas && canvasContainerRef.current) {
@@ -264,20 +271,21 @@ const FallingText: React.FC<FallingTextProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative z-[1] w-full h-full cursor-pointer text-center pt-8 overflow-hidden"
+      className="relative font-lirrier z-[1] w-full h-full cursor-pointer text-center pt-24 overflow-hidden"
       onClick={trigger === 'click' ? handleTrigger : undefined}
       onMouseEnter={trigger === 'hover' ? handleTrigger : undefined}
     >
       <div
         ref={textRef}
-        className="inline-block"
+        className="inline-block px-4 font-lirrier"
         style={{
           fontSize,
-          lineHeight: 1.4
+          lineHeight: 1.5,
+          fontStyle: "font-lirrier"
         }}
       />
 
-      <div className="absolute top-0 left-0 z-0" ref={canvasContainerRef} />
+      <div className="absolute top-0 left-0 z-0 font-lirrier" ref={canvasContainerRef} />
     </div>
   );
 };

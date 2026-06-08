@@ -1,7 +1,7 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { useMusicStore } from '@/components/MusicProvider';
+import { useMusicStore } from '@/context/MusicContext';
 
 gsap.registerPlugin(ScrollTrigger);
 

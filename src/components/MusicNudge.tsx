@@ -4,7 +4,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
-import { useMusicStore } from './MusicProvider';
+import { useMusicStore } from '@/context/MusicContext';
 
 const GOLD      = '#847B1A';
 const GOLD_DARK = '#4e4a0e';
