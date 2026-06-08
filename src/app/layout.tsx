@@ -8,12 +8,12 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "Ritika Sakhi ",
   description:
-    "A beautiful tribute website dedicated to Diksha Mam — memories, gratitude, gallery, and more.",
+    "Celebrating Ritika through memories, friendship, and special moments of her. ✨",
   icons: {
     icon: "/icon.png",
   },
