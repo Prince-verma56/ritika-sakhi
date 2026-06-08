@@ -109,7 +109,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     setUnlocked(true);
     setNeedsGesture(false);
     if (!hasAutoplayedRef.current && !playing) {
-      setTimeout(() => play(volume), AUTOPLAY_DELAY_MS);
+      play(volume);
     }
   }, [playing, volume, play]);
 
@@ -134,7 +134,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
     const doPlay = () => {
       clearTimeout(delayTimer);
-      delayTimer = setTimeout(() => play(volume), AUTOPLAY_DELAY_MS);
+      play(volume);
     };
 
     // If already unlocked (e.g. hot reload), play immediately
