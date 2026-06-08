@@ -106,7 +106,7 @@ class Title {
     const localScaleY = 0.15;
     const localScaleX = (this.plane.scale.y * 0.15 * aspect) / this.plane.scale.x;
     this.mesh.scale.set(localScaleX, localScaleY, 1);
-    
+
     // Position it below the plane (0.5 + half of text height (0.075) + margin)
     const worldMargin = 0.05;
     this.mesh.position.y = -0.5 - 0.075 - worldMargin / this.plane.scale.y;
@@ -264,44 +264,47 @@ class App {
   }
   createMedias(items?: GalleryItem[], bend = 1, textColor = '#003049', borderRadius = 0, font = 'italic bold 32px Poppins') {
     const defaultItems: GalleryItem[] = [
-      { image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512277/ChatGPT_Image_Jun_3_2026_06_40_01_PM_clhdnp.png', text: 'Gulabo' },
-     
+      {
+        image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512277/ChatGPT_Image_Jun_3_2026_06_40_01_PM_clhdnp.png',
+        text: 'Serenity'
+      },
+
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512397/ChatGPT_Image_Jun_3_2026_06_34_59_PM_aztjma.png',
-        text: 'Madhavi',
+        text: 'Radiance',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515074/ChatGPT_Image_Jun_4_2026_12_38_44_AM_zakuji.png',
-        text: 'Doll',
+        text: 'Reflection',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515073/ChatGPT_Image_Jun_4_2026_12_29_59_AM_c2jyby.png',
-        text: 'Softie',
+        text: 'Cheerful',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515073/ChatGPT_Image_Jun_4_2026_12_39_54_AM_cfreb3.png',
-        text: 'Vibe Check Passed',
+        text: 'Vibe Passed',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515074/ChatGPT_Image_Jun_4_2026_12_52_12_AM_v4aad3.png',
-        text: 'Lehenga Love',
+        text: 'Graceful',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515077/ChatGPT_Image_Jun_4_2026_12_29_45_AM_rp7ljf.png',
-        text: 'Santorini',
+        text: 'Radiant',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515078/ChatGPT_Image_Jun_4_2026_12_40_54_AM_szgivv.png',
-        text: 'Madam jii',
+        text: 'Joyful',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515483/ChatGPT_Image_Jun_4_2026_12_35_41_AM_f2lrps.png',
-        text: 'Shaamli',
+        text: 'Softie ',
       },
-      
+
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780515080/ChatGPT_Image_Jun_4_2026_12_30_04_AM_k1pk4i.png',
-        text: 'Shaamli',
+        text: 'Gorgeous',
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512370/ChatGPT_Image_Jun_3_2026_05_46_42_PM_m2k6gm.png',
@@ -309,9 +312,9 @@ class App {
       },
       {
         image: 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512369/ChatGPT_Image_Jun_3_2026_05_42_51_PM_nagnxg.png',
-        text: 'Shaamli',
+        text: 'Reflection',
       },
-      
+
     ];
 
 
