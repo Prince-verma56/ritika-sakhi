@@ -521,9 +521,10 @@ export default function MeetUs() {
             <div className="w-full lg:w-[54%] s1-card">
               <div className="s1-idx"><SectionIndex num="01" label="The First Time" inView={s1InView} bypass /></div>
               <MessageCard
-                heading="The First Time"
-                quote="One Google Meet was all it took — this person is genuinely one of mine."
-                body="Honestly, it started as just a college project — a task, a group, nothing more. Then came a Google Meet where we talked about actual things — our college journeys, the pressure of placements, what life after graduation even looks like. That was the first moment it felt like, oh, this person actually listens. No trying to impress anyone, no scripted replies — just two people on a screen having a real conversation that neither of us planned for. That day was genuinely good."
+                heading="Not Your Typical Girl 🤝"
+                quote="The Bro Energy"
+                body="Honestly, one of the first things I noticed was how easy it was to talk to her 🤝. No overthinking, no filtering every word, just normal conversations. Most people would probably be shocked hearing some of the words she casually throws around 😭, and honestly, so was I the first time. But that's what makes her different. She's got that buddy energy, good vibes, and a genuinely kind nature that makes people feel comfortable being themselves around her ✨.
+"
                 tags={[{ label: 'Moment', value: 'Google Meet' }, { label: 'Feeling', value: 'Comfortable' }, { label: 'Vibe', value: 'Real · Open' }]}
                 inView={s1InView} bypass
               />
@@ -552,9 +553,12 @@ export default function MeetUs() {
             <div className="w-full lg:w-[54%]">
               <SectionIndex num="02" label="Different Course" inView={s2InView} />
               <MessageCard
-                heading="Different Course, Same Energy"
+                heading="Different courses, same respect."
                 quote="She never once made the BCA vs B.Tech difference feel like a thing."
-                body="She is in B.Tech, I am in BCA — on paper, our circles were never supposed to overlap. But she never made that feel like a gap. Whenever I shared something I built or worked on, her appreciation was real — not the polite kind where someone nods and moves on. She actually engages, asks questions, stays interested. She does not just validate you, she genuinely listens. And that one thing matters more than most people realize."
+                body="She is in B.Tech, I'm in BCA, and honestly, when I first told her my course, a small part of me expected the usual comparison. But she never made it feel like a thing.
+
+There was never a gap, never any superiority, just genuine kindness and respect. Whenever I share something I'm building or working on, she stays curious, asks questions, and appreciates the effort behind it. She listens, pays attention, and that simple quality stands out more than most people realize ✨.
+"
                 tags={[{ label: 'Course', value: 'B.Tech' }, { label: 'Connection', value: 'Genuine · Deep' }, { label: 'Energy', value: 'Warm · Bright' }]}
                 inView={s2InView} delay={0.15}
               />

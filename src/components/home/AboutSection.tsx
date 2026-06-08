@@ -175,7 +175,7 @@ export default function AboutSection() {
                 animate={leftInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
-                &ldquo;One Google Meet was all it took — this person is genuinely one of mine.&rdquo;
+                &ldquo;Not Just a Teammate &rdquo;
               </motion.p>
 
               {/* Divider */}
@@ -197,11 +197,8 @@ export default function AboutSection() {
                 animate={leftInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.65, delay: 0.72 }}
               >
-                Some people show up only for the work — once the project ends, so does the
-                connection. Ritika was different. No performance, no small talk — just honest,
-                easy conversation. She is bubbly and fun, but also the kind of person you can say
-                anything real to without worrying. She never once made the BCA vs B.Tech
-                difference feel like a thing, and{' '}
+                At first glance, Ritika seems innocent and simple, but she's actually quite sharp, clever, and a complete artist in her own way. She says that "Khushi" doesn't really suit her, but honestly, I think it fits perfectly. What started as working together on a project slowly turned into a good friendship, and I'm genuinely glad I got a friend like you.
+                and{' '}
                 <span style={{ color: '#847B1A', fontStyle: 'italic' }}>that is what makes her genuinely special.</span>
               </motion.p>
             </div>

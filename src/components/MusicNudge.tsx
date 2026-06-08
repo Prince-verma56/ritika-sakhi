@@ -18,20 +18,12 @@ export function MusicNudge() {
       {needsGesture && (
         <motion.div
           key="nudge"
-          initial={{ opacity: 0, y: 20, scale: 0.92 }}
+          initial={{ opacity: 0, y: -20, scale: 0.92 }}
           animate={{ opacity: 1, y: 0,  scale: 1 }}
-          exit={{    opacity: 0, y: 16, scale: 0.95 }}
+          exit={{    opacity: 0, y: -16, scale: 0.95 }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           onClick={dismissNudge}
-          style={{
-            position:  'fixed',
-            bottom:    36,
-            left:      '50%',
-            transform: 'translateX(-50%)',
-            zIndex:    9999,
-            cursor:    'pointer',
-            userSelect:'none',
-          }}
+          className="fixed z-[9999] cursor-pointer select-none top-24 left-1/2 -translate-x-1/2 lg:left-auto lg:right-8 lg:translate-x-0"
         >
           <motion.div
             animate={{ y: [0, -5, 0] }}

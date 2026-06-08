@@ -96,7 +96,8 @@ export default function Stack({
           id: 1,
           content: (
             <img
-              src="https://res.cloudinary.com/dtslaveid/image/upload/v1780926361/2edf109e-003f-4e5e-8037-bab0a7d9e8b5_rp3uw5.png"
+
+              src="https://res.cloudinary.com/dtslaveid/image/upload/v1780515077/ChatGPT_Image_Jun_4_2026_12_46_06_AM_znq8t2.png"
               alt="card-1"
               className="w-full h-full object-cover pointer-events-none"
             />
@@ -126,7 +127,7 @@ export default function Stack({
           id: 4,
           content: (
             <img
-              src="https://res.cloudinary.com/dtslaveid/image/upload/v1780515077/ChatGPT_Image_Jun_4_2026_12_46_06_AM_znq8t2.png"
+              src="https://res.cloudinary.com/dtslaveid/image/upload/v1780926361/2edf109e-003f-4e5e-8037-bab0a7d9e8b5_rp3uw5.png"
               alt="card-4"
               className="w-full h-full object-cover pointer-events-none"
             />

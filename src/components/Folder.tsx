@@ -31,7 +31,7 @@ const darkenColor = (hex: string, percent: number): string => {
 };
 
 const Folder: React.FC<FolderProps> = ({
-  color = '#5227FF',
+  color = '#fbcd52',
   size = 1,
   items = [],
   images,
@@ -65,7 +65,7 @@ const Folder: React.FC<FolderProps> = ({
     </div>,
     <div key="d3" className="relative w-full h-full" style={{ position: 'relative' }}>
       <Image
-        src="https://res.cloudinary.com/dtslaveid/image/upload/v1780515483/ChatGPT_Image_Jun_4_2026_12_35_41_AM_f2lrps.png"
+        src="https://res.cloudinary.com/dtslaveid/image/upload/v1780926342/8a1f1cee-6838-4c90-88f0-189202ed3e00_yqkpmx.png"
         alt="Tribute 3"
         fill
         sizes="(max-width: 768px) 150px, 300px"

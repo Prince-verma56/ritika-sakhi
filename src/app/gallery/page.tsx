@@ -810,9 +810,9 @@ function Section1({ onEnter }: { onEnter: (index: number) => void }) {
             <Folder
               size={2.8} spread={1.1} cardWidth="85px" cardHeight="75px"
               images={[
-                'https://res.cloudinary.com/dtslaveid/image/upload/v1780515078/ChatGPT_Image_Jun_4_2026_12_40_54_AM_szgivv.png',
+                'https://res.cloudinary.com/dtslaveid/image/upload/v1780926842/0c4b8822-2f84-4911-a385-47ba25cb00f6_wvao5x.png',
                 'https://res.cloudinary.com/dtslaveid/image/upload/v1780512277/ChatGPT_Image_Jun_3_2026_06_40_01_PM_clhdnp.png',
-                'https://res.cloudinary.com/dtslaveid/image/upload/v1780512369/ChatGPT_Image_Jun_3_2026_05_42_51_PM_nagnxg.png',
+                'https://res.cloudinary.com/dtslaveid/image/upload/v1780926342/8a1f1cee-6838-4c90-88f0-189202ed3e00_yqkpmx.png',
               ]}
             />
           </div>
